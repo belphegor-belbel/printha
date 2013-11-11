@@ -1,0 +1,196 @@
+# The author has placed this work in the Public Domain, thereby
+# relinquishing all copyrights. Everyone is free to use, modify,
+# republish, sell or give away this work without prior consent
+# from anybody.
+#
+# This documentation is provided on an “as is” basis, without warranty
+# of any kind. Use at your own risk. Under no circumstances shall the
+# author(s) or contributor(s) be liable for damages resulting directly
+# or indirectly from the use or non-use of this documentation. 
+#
+# このファイルは単純なデータの羅列なので、再配布に際しての制限は設けません。
+# しかし、わざと印刷が失敗するようなデータを作成した場合は、紛らわしくないように、
+# その旨を付記しておいてください。
+
+# 差出人の名前、郵便番号、住所、その他…の順に記したテキストファイルへのパス。
+# 空の場合は、差出人欄に何も記載しない。
+SendFromPath                   sendfrom.txt
+
+# 縦書きに対応したフォントへのパス。
+FontPath                       resources/ipaexm00210/ipaexm.ttf
+
+# 郵便番号の書体。フォント(横書き)はシステムの設定に依存する。
+ZipFont                        Serif
+
+# 作成するファイル(PDFなど)のパス。空の場合は標準出力(stdout)へ出力する。
+OutputPath                     
+
+# 宛先を一度に複数入力する際の区切り文字。改行やタブの場合は\nのようにエスケープする。
+# 想定しているエスケープシーケンスは\a、 \b、 \f、 \n、 \r、 \s、 \t及び\vで、
+# このうち、\sは半角空白文字(' ' U+0020)を指す。
+# 出力がSVGの場合は、そもそも「印刷ページ数」の概念がないので無視する。
+PageDelimiter                  |
+
+# 「年賀」の2字を切手の下に朱筆し、郵便局が正月より前に配達するのを防ぐ。
+# 年賀ハガキには予め書いてあるので、普通のハガキで年賀状を出したい人向け。
+DrawNenga                      false
+
+################################################################################
+# 以下、sendtoは宛先のデータであることを指す。
+################################################################################
+
+# 宛先データの宛名、郵便番号、住所及びその他を区切るための区切り文字。
+sendto.dlmt                    ;
+
+# 宛先の郵便番号のフォントの大きさ。単位はポイント(Pt)。
+sendto.ZipFontSize             16.0
+
+# 以下、sendto.nameは宛先の名前(宛名)のデータであることを指す。
+
+# 宛先の名前を記載する場所。ハガキの左上を原点とし、それぞれ長方形の4辺の座標を指す。
+# あるいは、最初の2つが左上の点、残りが右下の点の座標とも言える。単位はポイント(Pt)。
+# 大まかな目安として、ハガキは横(x)が 283.464567Pt、縦(y)が419.527559Pt。
+# ハガキの中央の座標は (x, y) = (141.732283, 209.763780)
+# 1Ptは約0.353mmで、1mmは約2.835Pt。
+
+sendto.name.Rect               117.732283 80.000000 165.732283 360.000000
+
+# 宛先の名前のフォントの大きさ。単位はポイント(Pt)。
+sendto.name.FontSize           32.0
+
+# 半角空白文字(' ' U+0020)の字幅。1.0で全角文字と同じ幅になる。単位はおよそem。
+sendto.name.Whitespace         0.4
+
+# 文字数が少ない時、上下一杯に文字を広げるために、文字間を適宜空ける。
+sendto.name.Stretch            true 
+
+# 2行目以降の下限を1行目に合わせる。下揃え。
+# stretchが指定してある場合は、実質的に意味がない。改行が存在しない場合も同様。
+# 2行目の方が1行目より長い可能性がある場合は、指定すべきではない。
+sendto.name.Bottom             false
+
+# 改行文字
+sendto.name.LineBreak          \n
+
+# 以下、sendto.addrは宛先の住所のデータであることを指す。
+sendto.addr.rect               219.464567 80.000000 283.464567 330.000000
+sendto.addr.fontsize           20.000000
+sendto.addr.whitespace         0.4
+sendto.addr.stretch            false
+sendto.addr.bottom             true 
+sendto.addr.linebreak          \n
+
+# ハガキに名前・郵便番号・住所以外(宛先の社名、役職名など)を記載したい場合は、
+# 以下のextra[0]〜extra[5] に設定を書き込む。
+# <company.config.txt>と<telephon.config.txt>参照。
+#
+# 枠の面積がゼロ(デフォルト)の場合は、仮に宛先のデータが存在しても描画処理を行わない。
+sendto.extra[0].rect           0.0 0.0 0.0 0.0
+sendto.extra[0].fontsize       0.000000
+sendto.extra[0].whitespace     0.000000
+sendto.extra[0].stretch        false 
+sendto.extra[0].bottom         false
+sendto.extra[0].linebreak      \n
+
+sendto.extra[1].rect           0.000000 0.000000 0.000000 0.000000
+sendto.extra[1].fontsize       0.000000
+sendto.extra[1].whitespace     0.000000
+sendto.extra[1].stretch        true 
+sendto.extra[1].bottom         true 
+sendto.extra[1].linebreak      \n
+
+sendto.extra[2].rect           0.000000 0.000000 0.000000 0.000000
+sendto.extra[2].fontsize       0.000000
+sendto.extra[2].whitespace     0.000000
+sendto.extra[2].stretch        true 
+sendto.extra[2].bottom         true 
+sendto.extra[2].linebreak      \n
+
+sendto.extra[3].rect           0.000000 0.000000 0.000000 0.000000
+sendto.extra[3].fontsize       0.000000
+sendto.extra[3].whitespace     0.000000
+sendto.extra[3].stretch        true 
+sendto.extra[3].bottom         true 
+sendto.extra[3].linebreak      \n
+
+sendto.extra[4].rect           0.000000 0.000000 0.000000 0.000000
+sendto.extra[4].fontsize       0.000000
+sendto.extra[4].whitespace     0.000000
+sendto.extra[4].stretch        true 
+sendto.extra[4].bottom         true 
+sendto.extra[4].linebreak      \n
+
+sendto.extra[5].rect           0.000000 0.000000 0.000000 0.000000
+sendto.extra[5].fontsize       0.000000
+sendto.extra[5].whitespace     0.000000
+sendto.extra[5].stretch        true 
+sendto.extra[5].bottom         true 
+sendto.extra[5].linebreak      \n
+
+# 宛先の郵便番号欄に赤枠を描画する。官製ハガキでなはなく、白紙のハガキを印刷する場合向け。
+sendto.drawzipframe            false
+
+################################################################################
+# 以下、sendfromは差出人のデータ。内容は宛先に準ずる。
+################################################################################
+sendfrom.dlmt                  ;
+sendfrom.zipfontsize           12.000000
+
+sendfrom.name.rect             0.000000 200.000000 32.000000 340.000000
+sendfrom.name.fontsize         32.000000
+sendfrom.name.whitespace       0.400000
+sendfrom.name.stretch          true 
+sendfrom.name.bottom           false
+sendfrom.name.linebreak        \n
+
+sendfrom.addr.rect             32.000000 160.000000 80.000000 340.000000
+sendfrom.addr.fontsize         20.000000
+sendfrom.addr.whitespace       0.000000
+sendfrom.addr.stretch          false
+sendfrom.addr.bottom           true 
+sendfrom.addr.linebreak        \n
+
+sendfrom.extra[0].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[0].fontsize     20.000000
+sendfrom.extra[0].whitespace   0.000000
+sendfrom.extra[0].stretch      false
+sendfrom.extra[0].bottom       true 
+sendfrom.extra[0].linebreak    \n
+
+sendfrom.extra[1].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[1].fontsize     20.000000
+sendfrom.extra[1].whitespace   0.000000
+sendfrom.extra[1].stretch      false
+sendfrom.extra[1].bottom       true 
+sendfrom.extra[1].linebreak    \n
+
+sendfrom.extra[2].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[2].fontsize     0.000000
+sendfrom.extra[2].whitespace   0.000000
+sendfrom.extra[2].stretch      false
+sendfrom.extra[2].bottom       false
+sendfrom.extra[2].linebreak    \n
+
+sendfrom.extra[3].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[3].fontsize     0.000000
+sendfrom.extra[3].whitespace   0.000000
+sendfrom.extra[3].stretch      true 
+sendfrom.extra[3].bottom       false
+sendfrom.extra[3].linebreak    \n
+
+sendfrom.extra[4].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[4].fontsize     0.000000
+sendfrom.extra[4].whitespace   0.000000
+sendfrom.extra[4].stretch      true 
+sendfrom.extra[4].bottom       true 
+sendfrom.extra[4].linebreak    \n
+
+sendfrom.extra[5].rect         0.000000 0.000000 0.000000 0.000000
+sendfrom.extra[5].fontsize     0.000000
+sendfrom.extra[5].whitespace   0.000000
+sendfrom.extra[5].stretch      true 
+sendfrom.extra[5].bottom       true 
+sendfrom.extra[5].linebreak    \n
+
+# 差出人の郵便番号欄に赤枠を点線で描画する。
+sendfrom.drawzipframe          false

@@ -1,0 +1,11 @@
+# 電話番号欄を作るために、差出人住所と名前を右に寄せる。
+sendfrom.name.rect             20.000000 200.000000 52.000000 340.000000
+sendfrom.addr.rect             52.000000 160.000000 100.000000 340.000000
+
+# 電話番号欄
+sendfrom.extra[0].rect         0.000000 240.000000 20.000000 340.000000
+sendfrom.extra[0].fontsize     20.000000
+sendfrom.extra[0].whitespace   0.700000
+sendfrom.extra[0].stretch      false
+sendfrom.extra[0].bottom       false
+

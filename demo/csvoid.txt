@@ -1,0 +1,5 @@
+pagedelimiter                  \n
+sendto.dlmt                    ,
+sendto.addr.LineBreak          \s
+
+

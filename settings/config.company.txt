@@ -1,0 +1,19 @@
+# 役職欄を入れるために、宛名欄を小さくする。
+sendto.name.rect               117.732283 120.000000 165.732283 360.000000
+
+# 役職欄
+sendto.extra[0].rect           117.732283 75.000000 165.732283 115.000000
+sendto.extra[0].fontsize       20.000000
+sendto.extra[0].whitespace     0.000000
+sendto.extra[0].stretch        true 
+sendto.extra[0].bottom         false
+sendto.extra[0].linebreak      \n
+
+# 社名欄
+sendto.extra[1].rect           167.00000 80.000000 197.000000 320.000000
+sendto.extra[1].fontsize       15.000000
+sendto.extra[1].whitespace     0.400000
+sendto.extra[1].stretch        false 
+sendto.extra[1].bottom         true
+sendto.extra[1].linebreak      \n
+

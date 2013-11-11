@@ -1,0 +1,3 @@
+DrawNenga                      TRUE
+SendTo.DrawZipFrame            TRUE
+SendFrom.DrawZipFrame          TRUE
