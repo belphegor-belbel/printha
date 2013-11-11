@@ -804,7 +804,7 @@ int main (int argc, char* argv[]) {
 "  -h, --help            : Display this help document.\n"
 "  -i, --init            : Export clean <printha.config.txt> to the current \n"
 "                          working directory.\n"
-"                          If <sendfrom.txt> and <sendto.txt> is missing,\n"
+"                          If <sendfrom.txt> and <sendto.txt> are missing,\n"
 "                          they will also be created.\n"
 "  -s, --sendfrom <file> : Set the location of the text file which contains\n"
 "                          information about your name, zipcode, adress etc.\n"

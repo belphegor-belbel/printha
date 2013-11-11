@@ -70,7 +70,7 @@ Harfbuzz本体の導入手順は、
 
     printha < sendto.txt > foo.pdf
 
-を実行して、「hoge.pdf」の中身を確認してください。
+を実行して、「foo.pdf」の中身を確認してください。
 
 ###設定を変更する
 settingsディレクトリにあるconfig.txtと、demoディレクトリのスクリプトを参考にしてください。
