@@ -130,6 +130,13 @@ printha.config.txtの中身を書き換えると以下のような機能を使�
 また、"--ps"と"--svg"のコマンドラインオプションによって、
 PDFの代わりにPostScriptファイル、またはSVGファイルを出力することもできます。
 
+###printhaで出来ないこと
+
+現在、printhaは宛名を連名で出す機能を実装していません。ただ、宛名でも改行は有効なので、
+全角空白で字数を合わせれば、それらしく見せかけることができます。
+[入力データ](https://github.com/Torisugari/printha/blob/master/demo/demo3.sh)
+[出力データ](https://github.com/Torisugari/printha/blob/master/demo/3/renmei.pdf)
+
 アンインストール
 --------------
 
