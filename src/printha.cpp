@@ -54,7 +54,8 @@ using namespace printha;
 #define HAGAKI_WIDTH_PT   (MM_TO_PT(HAGAKI_WIDTH_MM))    // 283.464567pt 
 #define HAGAKI_HEIGHT_PT  (MM_TO_PT(HAGAKI_HEIGHT_MM))   // 419.527559pt
 
-#define PDF_RESOLUTION 72                                // dpi
+#define X_RESOLUTION 72.                                 // dpi
+#define Y_RESOLUTION 72.                                 // dpi
 
 #define ZIPRECT_TICK_LINE_WIDTH (0.7/2)                  // 0.6mm - 0.8mm (JIS)
 #define ZIPRECT_THIN_LINE_WIDTH (0.4/2)                  // 0.3mm - 0.5mm (JIS)
@@ -560,13 +561,12 @@ inline uint32_t countLineNumber(const char* aString, const char aDelimiter) {
 
 void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
                 const std::string& aString, const frameformat_t& aFrame) {
-  if (0.0 == aFrame.rect.width() || 0.0 == aFrame.rect.height()) {
+  if (aFrame.rect.width() <= 0. || aFrame.rect.height() <= 0.) {
     return;
   }
-  double maxFontSize = aFrame.fontsize;
-  
-  uint32_t count = countLineNumber(aString.c_str(), aFrame.linebreak);
 
+  double maxFontSize = aFrame.fontsize;
+  uint32_t count = countLineNumber(aString.c_str(), aFrame.linebreak);
   if (1 == count) {
     printString(aFTSeletedFont, aCS, aString.c_str(), aFrame.rect,
                 maxFontSize, aFrame.whitespace, aFrame.stretch);
@@ -971,7 +971,7 @@ int main (int argc, char* argv[]) {
                                                HAGAKI_HEIGHT_PT);
     }
   }
-  cairo_surface_set_fallback_resolution(cs, PDF_RESOLUTION, PDF_RESOLUTION);
+  cairo_surface_set_fallback_resolution(cs, X_RESOLUTION, Y_RESOLUTION);
 
   FT_Library ftlib;
   FT_Error fte = FT_Init_FreeType(&ftlib);
