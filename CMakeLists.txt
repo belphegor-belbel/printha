@@ -27,14 +27,9 @@ INCLUDE_DIRECTORIES(${HARFBUZZ_ICU_INCLUDE_DIRS})
 LINK_DIRECTORIES(${HARFBUZZ_ICU_LIBRARY_DIRS})
 LINK_LIBRARIES(${HARFBUZZ_ICU_LIBRARIES})
 
-# GCC does not support C++11 regex
-# set(DCMAKE_C_COMPILER "clang")
-# set(DCMAKE_CXX_COMPILER "clang++")
-# set(CMAKE_CXX_FLAGS "-Wall -std=c++0x -stdlib=libc++")
-
 set(CMAKE_C_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -DCMAKE_SOURCE_DIR=\\\"${CMAKE_SOURCE_DIR}\\\"")
-#
+
 ADD_CUSTOM_TARGET(debug
                     ${CMAKE_COMMAND} 
                       -DCMAKE_BUILD_TYPE:STRING=Debug ${PROJECT_SOURCE_DIR})
