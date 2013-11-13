@@ -1,5 +1,4 @@
-pagedelimiter                  \n
+pageDelimiter                  \n
 sendto.dlmt                    ,
 sendto.addr.LineBreak          \s
-
 

@@ -82,7 +82,7 @@ sendto.addr.linebreak          \n
 
 # ハガキに名前・郵便番号・住所以外(宛先の社名、役職名など)を記載したい場合は、
 # 以下のextra[0]〜extra[5] に設定を書き込む。
-# <company.config.txt>と<telephon.config.txt>参照。
+# <config.company.txt>と<config.telephon.txt>参照。
 #
 # 枠の面積がゼロ(デフォルト)の場合は、仮に宛先のデータが存在しても描画処理を行わない。
 sendto.extra[0].rect           0.0 0.0 0.0 0.0

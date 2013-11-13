@@ -504,8 +504,10 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     glyphbuffer[glyphIndex].y = origin.mY;
 
     if (!isVertical) {
-      glyphbuffer[glyphIndex].x += (fontsize * hbPosition[i].x_offset) / kXFactor;
-      glyphbuffer[glyphIndex].y -= (fontsize * hbPosition[i].y_offset) / kYFactor;
+      glyphbuffer[glyphIndex].x += (fontsize * hbPosition[i].x_offset) /
+                                     kXFactor;
+      glyphbuffer[glyphIndex].y -= (fontsize * hbPosition[i].y_offset) /
+                                     kYFactor;
     }
 
     uint32_t cluster_start = hbInfo[i].cluster;
@@ -795,8 +797,8 @@ int main (int argc, char* argv[]) {
   };
   PrintMode printMode = kPDF;
   for (i = 1; i < argc; i++) {
-    if ((0 == strncasecmp("-h", argv[i], strlen("-h"))) ||
-        (0 == strncasecmp("--help", argv[i], strlen("--help")))) {
+    if ((0 == strcasecmp("-h", argv[i])) ||
+        (0 == strcasecmp("--help", argv[i]))) {
       printf(
 "Usage: printha [OPTION...] [DATA]\n"
 "\n"
@@ -819,8 +821,8 @@ int main (int argc, char* argv[]) {
       );
       skipPrint = true;
     }
-    else if ((0 == strncasecmp("-i", argv[i], strlen("-i"))) ||
-        (0 == strncasecmp("--init", argv[i], strlen("--init")))) {
+    else if ((0 == strcasecmp("-i", argv[i])) ||
+        (0 == strcasecmp("--init", argv[i]))) {
       settings::read(kBuildDirConfigFile, settings);
       settings.fontpath = kBuildDirFontFile;
 
@@ -842,7 +844,7 @@ int main (int argc, char* argv[]) {
 
       skipPrint = true;
     }
-    else if ((0 == strncasecmp("-s", argv[i], strlen("-s"))) ||
+    else if ((0 == strcasecmp("-s", argv[i])) ||
         (0 == strncasecmp("--sendfrom", argv[i], strlen("--sendfrom")))) {
       i++;
       if (i < argc) {
@@ -864,8 +866,8 @@ int main (int argc, char* argv[]) {
         exit(-1);
       }
     }
-    else if ((0 == strncasecmp("-o", argv[i], strlen("-o"))) ||
-        (0 == strncasecmp("--output", argv[i], strlen("--output")))) {
+    else if ((0 == strcasecmp("-o", argv[i])) ||
+        (0 == strcasecmp("--output", argv[i]))) {
       i++;
       if (i < argc) {
         if (0 != char(*argv[i])) {
@@ -886,7 +888,7 @@ int main (int argc, char* argv[]) {
         exit(-1);
       }
     }
-    else if (0 == strncasecmp("--import", argv[i], strlen("--import"))) {
+    else if (0 == strcasecmp("--import", argv[i])) {
       i++;
       if (i < argc) {
         if (0 != char(*argv[i])) {
@@ -908,7 +910,7 @@ int main (int argc, char* argv[]) {
         exit(-1);
       }
     }
-    else if (0 == strncasecmp("--export", argv[i], strlen("--export"))) {
+    else if (0 == strcasecmp("--export", argv[i])) {
       i++;
       if (i < argc) {
         if (0 != char(*argv[i])) {
