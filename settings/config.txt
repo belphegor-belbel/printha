@@ -17,7 +17,7 @@
 SendFromPath                   sendfrom.txt
 
 # 縦書きに対応したフォントへのパス。
-FontPath                       resources/ipaexm00210/ipaexm.ttf
+FontPath                       resources/ipaexm00201/ipaexm.ttf
 
 # 郵便番号の書体。フォント(横書き)はシステムの設定に依存する。
 ZipFont                        Serif

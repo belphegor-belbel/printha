@@ -64,8 +64,8 @@ using namespace printha;
 void setBackground(cairo_surface_t* aCS) {
   cairo_surface_t* bg =
     cairo_image_surface_create_from_png(CMAKE_SOURCE_DIR "/resources/bg.png");
-  int width = cairo_image_surface_get_width(bg);
-  int height = cairo_image_surface_get_height(bg);
+  int32_t width = cairo_image_surface_get_width(bg);
+  int32_t height = cairo_image_surface_get_height(bg);
 
   cairo_t* c = cairo_create(aCS);
   cairo_scale(c, HAGAKI_WIDTH_PT/width, HAGAKI_HEIGHT_PT/height);
@@ -112,7 +112,7 @@ void printZipcode(cairo_surface_t* aCS, const char* aZipcode,
 
   const char* ptr = aZipcode;
 
-  unsigned int i;
+  uint32_t i;
   for (i =0; i < 7; i++) {
     const point_t& start = aRects[i].mStart;
     const point_t& end = aRects[i].mEnd;
@@ -229,11 +229,11 @@ inline bool isWhiteSpace(const char* aString, uint32_t aCluster) {
   return ' ' == char(*(aString + aCluster));
 }
 
-inline int hb_direction_to_cairo_direction(hb_direction_t aDirection) {
+inline int32_t hb_direction_to_cairo_direction(hb_direction_t aDirection) {
   switch (aDirection) {
   case HB_DIRECTION_TTB:
-  case HB_DIRECTION_RTL:
     return -1;
+  case HB_DIRECTION_RTL:
   case HB_DIRECTION_LTR:
   case HB_DIRECTION_BTT:
     return 1;
@@ -243,18 +243,16 @@ inline int hb_direction_to_cairo_direction(hb_direction_t aDirection) {
   return 0;
 }
 
-inline int abs_to_cairo_direction(hb_direction_t aDirection) {
-  switch (aDirection) {
-  case HB_DIRECTION_BTT:
-  case HB_DIRECTION_RTL:
-    return -1;
-  case HB_DIRECTION_TTB:
-  case HB_DIRECTION_LTR:
-    return 1;
-  case HB_DIRECTION_INVALID:
-    return 0;
+inline void 
+reverseCairoCluster(cairo_text_cluster_t aBuff[], uint32_t aLength) {
+  uint32_t length = aLength / 2;
+  cairo_text_cluster_t temp;
+  uint32_t i;
+  for (i = 0; i < length; i++) {
+    temp = aBuff[i];
+    aBuff[i] = aBuff[aLength - i - 1];
+    aBuff[aLength - i - 1] = temp;
   }
-  return 0;
 }
 
 double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
@@ -270,7 +268,8 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   fprintf(stderr, "line:%s\n", aString);
 #endif
 
-  const bool isVertical = (aDirection == HB_DIRECTION_TTB);
+  const bool isVertical = HB_DIRECTION_IS_VERTICAL(aDirection);
+  const bool isBackward = HB_DIRECTION_IS_BACKWARD(aDirection);
   double absMaxAdvance = (isVertical)? aRect.height() : aRect.width();
   double linewidth = (isVertical)? aRect.width() : aRect.height();
 
@@ -293,23 +292,24 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     exit(-1);
   }
 
-  hb_font_t* hbFontSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
+  hb_font_t* hbSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
 
 
   hb_buffer_t* buff = hb_buffer_create();
   hb_buffer_set_unicode_funcs(buff, hb_icu_get_unicode_funcs());
   hb_buffer_set_direction(buff, aDirection);
-  hb_buffer_set_script(buff, HB_SCRIPT_HAN);
-  static const char ja[] = "ja";
-  hb_language_t lang = hb_language_from_string(ja, -1);
-  hb_buffer_set_language(buff, lang);
+
+  if (isVertical) {
+    hb_buffer_set_script(buff, HB_SCRIPT_HAN);
+    hb_buffer_set_language(buff, hb_language_from_string("ja", -1));
+  }
 
   hb_buffer_add_utf8(buff, aString, -1, 0, -1);
   hb_buffer_guess_segment_properties(buff);
 
-  hb_shape(hbFontSeletedFont, buff, nullptr, 0);
+  hb_shape(hbSeletedFont, buff, nullptr, 0);
 
-  unsigned int length;
+  uint32_t length;
   hb_glyph_info_t* hbInfo = hb_buffer_get_glyph_infos(buff, &length);
   hb_glyph_position_t*
     hbPosition = hb_buffer_get_glyph_positions(buff, &length);
@@ -321,19 +321,22 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   const double& kAdvanceFactor = isVertical? kYFactor : kXFactor;
   const int32_t kHBAdvanceToCairoAdvance = 
     hb_direction_to_cairo_direction(aDirection);
-  const int32_t kAbsoluteToCairoAdvance = 
-    abs_to_cairo_direction(aDirection);
   const int32_t kAbsWhiteSpaceAdvance = int32_t(kAdvanceFactor * aWhiteSpace);
   const int32_t kHBWhiteSpaceAdvance =
-    kAbsWhiteSpaceAdvance * kAbsoluteToCairoAdvance * kHBAdvanceToCairoAdvance;
-  int hbTotalAdvance = 0;
-  unsigned int i;
+    kAbsWhiteSpaceAdvance * kHBAdvanceToCairoAdvance;
+  int32_t hbTotalAdvance = 0;
+  uint32_t i;
   for (i = 0; i < length; i++) {
 #ifdef DEBUG
     fprintf(stderr, "\ni:%d\n", i);
     uint32_t start = hbInfo[i].cluster;
-    uint32_t end = (length -1 == i)? strlength :
-                                    hbInfo[i + 1].cluster;
+    uint32_t end = 0;
+    if (isBackward) {
+      end = (0 == i)? strlength : hbInfo[i - 1].cluster;
+    }
+    else {
+      end = (length -1 == i)? strlength : hbInfo[i + 1].cluster;
+    }
     char charbuff[40];
     if (end - start < sizeof(charbuff)) {
        memcpy(charbuff, aString + start, end - start);
@@ -368,7 +371,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   }
 
   if (fontsize <= 0.) {
-    hb_font_destroy(hbFontSeletedFont);
+    hb_font_destroy(hbSeletedFont);
     hb_buffer_destroy(buff);
     return 0.;
   }
@@ -385,14 +388,14 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
   double& origin_parallel_to_advance = isVertical? origin.mY : origin.mX;
 
-  int absPadding = 0;
+  int32_t absPadding = 0;
   if (aMaxFontSize == fontsize) {
-    int left = ((absMaxAdvance * kAdvanceFactor / fontsize) -
+    int32_t left = ((absMaxAdvance * kAdvanceFactor / fontsize) -
                abs(hbTotalAdvance));
     if (aStretch) {
       absPadding = left / (length - 1);
     }
-    else if (aBottom) {
+    else if (aBottom ^ isBackward) {
       origin_parallel_to_advance += left *  fontsize / kAdvanceFactor;
       absMaxAdvance -= left *  fontsize / kAdvanceFactor;
     }
@@ -405,20 +408,19 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     exit(-1);
   }
 
-  hb_font_destroy(hbFontSeletedFont);
-  hbFontSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
+  hb_font_destroy(hbSeletedFont);
 
-  hb_buffer_destroy(buff);
-  buff = hb_buffer_create();
-  hb_buffer_set_unicode_funcs(buff, hb_icu_get_unicode_funcs());
-  hb_buffer_set_direction(buff, aDirection);
-  hb_buffer_set_script(buff, HB_SCRIPT_HAN);
-  hb_buffer_set_language(buff, lang);
+  hb_segment_properties_t properties;
+  hb_buffer_get_segment_properties(buff, &properties);
+ 
+  hb_buffer_clear_contents(buff);
 
+  hb_buffer_set_segment_properties(buff, &properties);
   hb_buffer_add_utf8(buff, aString, -1, 0, -1);
-  hb_buffer_guess_segment_properties(buff);
 
-  hb_shape(hbFontSeletedFont, buff, nullptr, 0);
+  hbSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
+  hb_shape(hbSeletedFont, buff, nullptr, 0);
+
   hbInfo = hb_buffer_get_glyph_infos(buff, &length);
   hbPosition = hb_buffer_get_glyph_positions(buff, &length);
 
@@ -450,6 +452,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   else {
     cairo_set_source_rgb(ca, 0., 0., 0.);
   }
+
   cairo_font_face_t* caSeletedFont =
     cairo_ft_font_face_create_for_ft_face
      (aFTSeletedFont, isVertical? FT_LOAD_VERTICAL_LAYOUT : 0);
@@ -460,13 +463,12 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   uint32_t glyphIndex = 0;
   const uint32_t kGlyphLength = 40;
   cairo_glyph_t glyphbuffer[kGlyphLength];
+
   cairo_text_cluster_t clusterbuffer[kGlyphLength];
   uint32_t clusterTotalLength = 0;
   const char* clusterStr(nullptr);
-
-  cairo_text_cluster_flags_t clusterFlag =
-    (aDirection == HB_DIRECTION_RTL)? 
-      CAIRO_TEXT_CLUSTER_FLAG_BACKWARD : cairo_text_cluster_flags_t(0);
+  cairo_text_cluster_flags_t clusterFlag = (isBackward)?
+    CAIRO_TEXT_CLUSTER_FLAG_BACKWARD : cairo_text_cluster_flags_t(0);
 
   if (!isVertical) {
 #ifdef DEBUG
@@ -481,20 +483,25 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
   for (i = 0; i < length; i++) {
     if (glyphIndex == 0) {
-      clusterStr = aString + hbInfo[i].cluster;
+      if (!isBackward) {
+        clusterStr = aString + hbInfo[i].cluster;
+      }
       clusterTotalLength = 0;
     }
 
     if (isWhiteSpace(aString, hbInfo[i].cluster)) {
+      if (glyphIndex) {
+        if (isBackward) {
+          reverseCairoCluster(clusterbuffer, glyphIndex);
+        }
+        cairo_show_text_glyphs(ca, clusterStr, clusterTotalLength,
+                               glyphbuffer, glyphIndex,
+                               clusterbuffer, glyphIndex, clusterFlag);
+      }
       // We'd rather like to go just forward
       // than to make cairo render "white-space" glyph.
       origin_parallel_to_advance +=
-        (kAbsWhiteSpaceAdvance + absPadding) * kAbsoluteToCairoAdvance 
-         * fontsize / kAdvanceFactor;
-
-      cairo_show_text_glyphs(ca, clusterStr, clusterTotalLength,
-                             glyphbuffer, glyphIndex,
-                             clusterbuffer, glyphIndex, clusterFlag);
+        (kAbsWhiteSpaceAdvance + absPadding) * fontsize / kAdvanceFactor;
       glyphIndex = 0;
       continue;
     }
@@ -511,8 +518,14 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     }
 
     uint32_t cluster_start = hbInfo[i].cluster;
-    uint32_t cluster_next = (length - 1 == i)? strlen(aString) :
-                                             hbInfo[i + 1].cluster;
+    uint32_t cluster_next = 0;
+    if (isBackward) {
+      cluster_next = (0 == i)? strlength : hbInfo[i - 1].cluster;
+      clusterStr = aString + hbInfo[i].cluster;
+    }
+    else {
+      cluster_next = (length - 1 == i)? strlength : hbInfo[i + 1].cluster;
+    }
     uint32_t clusterbytes = cluster_next - cluster_start;
     clusterbuffer[glyphIndex].num_bytes = clusterbytes;
     clusterbuffer[glyphIndex].num_glyphs = 1;
@@ -520,12 +533,14 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
     origin.mX += (fontsize * hbPosition[i].x_advance) / kXFactor;
     origin.mY -= (fontsize * hbPosition[i].y_advance) / kYFactor;
-    origin_parallel_to_advance +=
-      fontsize * absPadding * kAbsoluteToCairoAdvance / kAdvanceFactor;
+    origin_parallel_to_advance += fontsize * absPadding / kAdvanceFactor;
 
     glyphIndex++;
 
     if (kGlyphLength == glyphIndex) {
+      if (isBackward) {
+        reverseCairoCluster(clusterbuffer, glyphIndex);
+      }
       cairo_show_text_glyphs(ca, clusterStr, clusterTotalLength,
                              glyphbuffer, glyphIndex,
                              clusterbuffer, glyphIndex, clusterFlag);
@@ -534,17 +549,19 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   }
 
   if (glyphIndex) {
+    if (isBackward) {
+      reverseCairoCluster(clusterbuffer, glyphIndex);
+    }
+
     cairo_show_text_glyphs(ca, clusterStr, clusterTotalLength,
                            glyphbuffer, glyphIndex,
                            clusterbuffer, glyphIndex, clusterFlag);
-    cairo_text_extents_t extents;
-    cairo_glyph_extents(ca, glyphbuffer, glyphIndex, &extents);
   }
   cairo_surface_flush(aCS);
 
   cairo_destroy(ca);
   cairo_font_face_destroy(caSeletedFont);
-  hb_font_destroy(hbFontSeletedFont);
+  hb_font_destroy(hbSeletedFont);
   hb_buffer_destroy(buff);
 
   return origin.mY - aRect.mStart.mY;
@@ -553,10 +570,10 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 inline uint32_t countLineNumber(const char* aString, const char aDelimiter) {
   uint32_t count = 1;
   while (*aString) {
-     if (aDelimiter == (*aString)) {
-        count++;
-     }
-     aString++;
+    if (aDelimiter == (*aString)) {
+      count++;
+    }
+    aString++;
   }
   return count;
 }
@@ -787,7 +804,7 @@ int main (int argc, char* argv[]) {
     fprintf(stderr, "Missing file:%s\n", userDirConfig.c_str());
   }
 
-  int i;
+  int32_t i;
   std::string sendtoData;
   bool skipPrint = false;
   enum PrintMode {
