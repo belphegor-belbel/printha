@@ -107,6 +107,10 @@ Fedoraでは、Harfbuzzパッケージが配布されているので、ビルド
 実際にはこの順番になっているとは限らないので、表計算ソフトで列を入れ替えて列の順番を上記の
 形式と揃えてから、CSVに出力すると便利です。
 
+* CSVファイルからPDFへの変換例
+    * [入力ファイル(csv)](https://github.com/Torisugari/printha/blob/master/demo/addressbook2.csv)
+    * [CVSパーサー](https://github.com/Torisugari/printha/blob/master/demo/csvparser.py)と[コマンドライン](https://github.com/Torisugari/printha/blob/master/demo/demo4.sh)
+    * [出力ファイル(pdf](https://github.com/Torisugari/printha/blob/master/demo/4/csv.pdf)
 ###printhaの設定を変更する
 
 printhaはカレントディレクトリにあるprintha.config.txtで設定された通りに動作します。
