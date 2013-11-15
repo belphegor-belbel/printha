@@ -300,7 +300,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   hb_buffer_set_direction(buff, aDirection);
 
   if (isVertical) {
-    hb_buffer_set_script(buff, HB_SCRIPT_HAN);
+    hb_buffer_set_script(buff, HB_SCRIPT_KATAKANA);
     hb_buffer_set_language(buff, hb_language_from_string("ja", -1));
   }
 
