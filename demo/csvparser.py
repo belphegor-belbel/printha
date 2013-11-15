@@ -3,7 +3,6 @@
 
 import csv
 import sys
-import codecs
 
 outstr = ""
 
