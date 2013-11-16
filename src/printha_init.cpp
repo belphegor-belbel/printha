@@ -5,6 +5,7 @@ void init(textformat_t& aSettings) {
   aSettings.outputpath = "";
   aSettings.pagedelimiter = '|';
   aSettings.drawnenga = false;
+  aSettings.sendfrom_zipframe_offset = point_t(0.000000, 0.000000);
   aSettings.sendfrom.dlmt = ';';
   aSettings.sendfrom.zipfontsize = 12.000000;
   aSettings.sendfrom.name.rect = rect_t(0.000000, 200.000000, 32.000000, 340.000000);

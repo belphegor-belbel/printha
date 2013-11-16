@@ -71,7 +71,7 @@ struct frameformat_t {
 
 struct personformat_t {
   char dlmt;
-  double zipfontsize; //milimeter
+  double zipfontsize;     //Pt
   frameformat_t name;
   frameformat_t addr;
   frameformat_t extra[6];
@@ -85,6 +85,8 @@ struct textformat_t {
   std::string zipfont;
   char pagedelimiter;
   bool drawnenga;
+  bool preview;
+  point_t sendfrom_zipframe_offset;      //mm
   personformat_t sendto;
   personformat_t sendfrom;
 };

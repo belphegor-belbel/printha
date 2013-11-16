@@ -38,6 +38,14 @@
         __KEY__.mEnd.mY \
        )
 
+#define PRINTHA_WRITE_CPP_POINT(__FILENAME__,__KEY__) \
+  flogf(__FILENAME__, \
+        "  %s = point_t(%f, %f);\n", \
+        #__KEY__, \
+        __KEY__.mX, \
+        __KEY__.mY \
+       )
+
 #define PRINTHA_WRITE_CPP_DOUBLE(__FILENAME__,__KEY__) \
   flogf(__FILENAME__, "  %s = %f;\n", #__KEY__, __KEY__)
 
@@ -81,6 +89,14 @@
         __KEY__.mEnd.mY \
        )
 
+#define PRINTHA_WRITE_TXT_POINT(__FILENAME__,__KEY__) \
+  flogf(__FILENAME__, \
+        "%-30s %f %f\n", \
+        #__KEY__, \
+        __KEY__.mX, \
+        __KEY__.mY \
+       )
+
 #define PRINTHA_WRITE_TXT_DOUBLE(__FILENAME__,__KEY__) \
   flogf(__FILENAME__, "%-30s %f\n", #__KEY__, __KEY__)
 
@@ -122,6 +138,13 @@
                   &__KEY__.mStart.mY, \
                   &__KEY__.mEnd.mX, \
                   &__KEY__.mEnd.mY); \
+    }
+#define PRINTHA_READ_TXT_POINT(__KEY__) \
+    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
+                                    int(std::strlen(#__KEY__) - 1))) { \
+      std::sscanf(line.c_str(), "%30s %lf %lf", buff, \
+                  &__KEY__.mX, \
+                  &__KEY__.mY); \
     }
 #define PRINTHA_READ_TXT_DOUBLE(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
@@ -272,6 +295,7 @@ bool read(const char* aFileName, textformat_t& aSettings) {
   std::string& outputpath = aSettings.outputpath;
   char& pagedelimiter = aSettings.pagedelimiter;
   bool& drawnenga = aSettings.drawnenga;
+  point_t& sendfrom_zipframe_offset =  aSettings.sendfrom_zipframe_offset;
   personformat_t& sendto = aSettings.sendto;
   personformat_t& sendfrom = aSettings.sendfrom;
 
@@ -297,6 +321,7 @@ bool read(const char* aFileName, textformat_t& aSettings) {
     PRINTHA_READ_TXT_STRING(zipfont)
     PRINTHA_READ_TXT_CHAR(pagedelimiter)
     PRINTHA_READ_TXT_BOOLEAN(drawnenga)
+    PRINTHA_READ_TXT_POINT(sendfrom_zipframe_offset)
     PRINTHA_READ_TXT_PERSON(sendto)
     PRINTHA_READ_TXT_PERSON(sendfrom)
   }
@@ -316,6 +341,7 @@ void write(const char* aFileName, const textformat_t& aSettings,
     PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.outputpath);
     PRINTHA_WRITE_CPP_CHAR(aFileName, aSettings.pagedelimiter);
     PRINTHA_WRITE_CPP_BOOLEAN(aFileName, aSettings.drawnenga);
+    PRINTHA_WRITE_CPP_POINT(aFileName, aSettings.sendfrom_zipframe_offset);
     PRINTHA_WRITE_CPP_PERSON(aFileName, aSettings.sendfrom);
     PRINTHA_WRITE_CPP_PERSON(aFileName, aSettings.sendto);
     flogf(aFileName, "}\n");
@@ -327,6 +353,8 @@ void write(const char* aFileName, const textformat_t& aSettings,
     const std::string& outputpath = aSettings.outputpath;
     const char& pagedelimiter = aSettings.pagedelimiter;
     const bool& drawnenga = aSettings.drawnenga;
+    const point_t& sendfrom_zipframe_offset = 
+      aSettings.sendfrom_zipframe_offset;
     const personformat_t& sendto = aSettings.sendto;
     const personformat_t& sendfrom = aSettings.sendfrom;
 
@@ -336,6 +364,7 @@ void write(const char* aFileName, const textformat_t& aSettings,
     PRINTHA_WRITE_TXT_STRING(aFileName, outputpath);
     PRINTHA_WRITE_TXT_CHAR(aFileName, pagedelimiter);
     PRINTHA_WRITE_TXT_BOOLEAN(aFileName, drawnenga);
+    PRINTHA_WRITE_TXT_POINT(aFileName, sendfrom_zipframe_offset);
     PRINTHA_WRITE_TXT_PERSON(aFileName, sendto);
     PRINTHA_WRITE_TXT_PERSON(aFileName, sendfrom);
   }

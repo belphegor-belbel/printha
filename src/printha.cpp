@@ -690,12 +690,23 @@ void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
       printLines(aFTSeletedFont, aCS, token, aSettings.sendfrom.name);
     }
 
+    int32_t i;
     if (file) {
       std::getline(file, token, aSettings.sendfrom.dlmt);
+
+      ziprect_t modifiedZipRects;
+
+      for (i = 0; i < 7; i++) {
+        double x = aSettings.sendfrom_zipframe_offset.mX + zipRects2[i].mStart.mX;
+        double y = aSettings.sendfrom_zipframe_offset.mY + zipRects2[i].mStart.mY;
+        modifiedZipRects[i] = rect_t(point_t(x, y), 
+                                     zipRects2[i].width(), zipRects2[i].height());
+      }
+
       printZipcode(aCS, token.c_str(),
                    aSettings.zipfont.c_str(), aSettings.sendfrom.zipfontsize,
-                   zipRects2, aSettings.sendfrom.drawzipframe? DRAW_SENDFROM :
-                                                              NO_FRAME);
+                   modifiedZipRects, aSettings.sendfrom.drawzipframe?
+                                      DRAW_SENDFROM : NO_FRAME);
     }
 
     if (file) {
@@ -703,7 +714,6 @@ void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
       printLines(aFTSeletedFont, aCS, token, aSettings.sendfrom.addr);
     }
 
-    int i;
     for (i = 0; i < kExtraSize; i++) {
       if (!file || file.eof()) {
         break;
