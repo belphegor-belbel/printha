@@ -635,13 +635,13 @@ void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   };
 
   static const ziprect_t zipRects2 = {
-    rect_t(point_t(4., 125.0), 4., 6.),
-    rect_t(point_t(8.1, 125.0), 4., 6.),
-    rect_t(point_t(12.2, 125.0), 4., 6.),
-    rect_t(point_t(17.2, 125.0), 4., 6.),
-    rect_t(point_t(21.3, 125.0), 4., 6.),
-    rect_t(point_t(25.4, 125.0), 4., 6.),
-    rect_t(point_t(29.5, 125.0), 4., 6.),
+    rect_t(point_t(6., 122.0), 4., 7.),
+    rect_t(point_t(10., 122.0), 4., 7.),
+    rect_t(point_t(14., 122.0), 4., 7.),
+    rect_t(point_t(19., 122.0), 4., 7.),
+    rect_t(point_t(23., 122.0), 4., 7.),
+    rect_t(point_t(27., 122.0), 4., 7.),
+    rect_t(point_t(31., 122.0), 4., 7.),
   };
 
   std::string token;
