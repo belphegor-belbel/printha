@@ -617,6 +617,12 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
 void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
            const std::string& aArgv, const textformat_t& aSettings) {
+
+  if (aSettings.preview) {
+    static const char kBuildDirImageFile[] =
+      CMAKE_SOURCE_DIR "/resources/bg.png";
+    setBackground(aCS, kBuildDirImageFile);
+  }
   // See: <http://www.post.japanpost.jp/zipcode/zipmanual/p05.html>
   // unit: milimeter
   static const ziprect_t zipRects = {
@@ -776,8 +782,6 @@ int main (int argc, char* argv[]) {
     CMAKE_SOURCE_DIR "/settings/sendto.txt";
   static const char kBuildDirFontFile[] =
     CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf";
-  static const char kBuildDirImageFile[] =
-    CMAKE_SOURCE_DIR "/resources/bg.png";
 
   textformat_t settings;
 
@@ -814,7 +818,7 @@ int main (int argc, char* argv[]) {
   int32_t i;
   std::string sendtoData;
   bool skipPrint = false;
-  bool isPreview = false;
+  settings.preview = false;
   enum PrintMode {
     kPDF,
     kSVG,
@@ -956,7 +960,7 @@ int main (int argc, char* argv[]) {
       printMode = kPS;
     }
     else if (0 == strcasecmp("--preview", argv[i])) {
-      isPreview = true;
+      settings.preview = true;
     }
     else {
       sendtoData = argv[i];
@@ -1029,10 +1033,6 @@ int main (int argc, char* argv[]) {
     if (sendtoData.size() > 0 && '\n' == char(*(sendtoData.end() - 1))) {
       sendtoData.resize(sendtoData.size() - 1);
     }
-  }
-
-  if (isPreview) {
-    setBackground(cs, kBuildDirImageFile);
   }
 
   if (!sendtoData.empty()) {
