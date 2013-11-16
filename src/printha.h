@@ -85,7 +85,6 @@ struct textformat_t {
   std::string zipfont;
   char pagedelimiter;
   bool drawnenga;
-  bool preview;
   point_t sendfrom_zipframe_offset;      //mm
   personformat_t sendto;
   personformat_t sendfrom;

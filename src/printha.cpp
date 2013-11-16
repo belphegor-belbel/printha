@@ -60,10 +60,9 @@ using namespace printha;
 #define ZIPRECT_TICK_LINE_WIDTH (0.7/2)                  // 0.6mm - 0.8mm (JIS)
 #define ZIPRECT_THIN_LINE_WIDTH (0.4/2)                  // 0.3mm - 0.5mm (JIS)
 
-#ifdef DEBUG
-void setBackground(cairo_surface_t* aCS) {
+void setBackground(cairo_surface_t* aCS, const char* aFileName) {
   cairo_surface_t* bg =
-    cairo_image_surface_create_from_png(CMAKE_SOURCE_DIR "/resources/bg.png");
+    cairo_image_surface_create_from_png(aFileName);
   int32_t width = cairo_image_surface_get_width(bg);
   int32_t height = cairo_image_surface_get_height(bg);
 
@@ -74,7 +73,6 @@ void setBackground(cairo_surface_t* aCS) {
   cairo_surface_destroy (bg);
   cairo_destroy(c);
 }
-#endif
 
 void GetVerticalOriginFromRect(const rect_t& aRect, point_t* aOrigin) {
   aOrigin->mX = (aRect.mStart.mX + aRect.mEnd.mX) / 2;
@@ -619,9 +617,6 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
 void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
            const std::string& aArgv, const textformat_t& aSettings) {
-#ifdef DEBUG
-  setBackground(aCS);
-#endif
   // See: <http://www.post.japanpost.jp/zipcode/zipmanual/p05.html>
   // unit: milimeter
   static const ziprect_t zipRects = {
@@ -780,7 +775,9 @@ int main (int argc, char* argv[]) {
   static const char kBuildDirSendToFile[] =
     CMAKE_SOURCE_DIR "/settings/sendto.txt";
   static const char kBuildDirFontFile[] =
-    CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf"; 
+    CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf";
+  static const char kBuildDirImageFile[] =
+    CMAKE_SOURCE_DIR "/resources/bg.png";
 
   textformat_t settings;
 
@@ -817,6 +814,7 @@ int main (int argc, char* argv[]) {
   int32_t i;
   std::string sendtoData;
   bool skipPrint = false;
+  bool isPreview = false;
   enum PrintMode {
     kPDF,
     kSVG,
@@ -845,6 +843,7 @@ int main (int argc, char* argv[]) {
 "  --export <file>       : Export current settings to <file>.\n"
 "  --svg                 : Temporally output data as a SVG file.\n"
 "  --ps                  : Temporally output data as a PostScript file.\n"
+"  --preview             : Temporally output data with background image file.\n"
       );
       skipPrint = true;
     }
@@ -950,11 +949,14 @@ int main (int argc, char* argv[]) {
         exit(-1);
       }
     }
-    else if (0 == strncasecmp("--svg", argv[i], strlen("--svg"))) {
+    else if (0 == strcasecmp("--svg", argv[i] )) {
       printMode = kSVG;
     }
-    else if (0 == strncasecmp("--ps", argv[i], strlen("--ps"))) {
+    else if (0 == strcasecmp("--ps", argv[i])) {
       printMode = kPS;
+    }
+    else if (0 == strcasecmp("--preview", argv[i])) {
+      isPreview = true;
     }
     else {
       sendtoData = argv[i];
@@ -1027,6 +1029,10 @@ int main (int argc, char* argv[]) {
     if (sendtoData.size() > 0 && '\n' == char(*(sendtoData.end() - 1))) {
       sendtoData.resize(sendtoData.size() - 1);
     }
+  }
+
+  if (isPreview) {
+    setBackground(cs, kBuildDirImageFile);
   }
 
   if (!sendtoData.empty()) {
