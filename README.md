@@ -132,8 +132,25 @@ printha.config.txtの中身を書き換えると以下のような機能を使�
 
 詳しくはsettingsディレクトリにある[config.txt](https://github.com/Torisugari/printha/blob/master/settings/config.txt)を参考にしてください。
 
-また、"--ps"と"--svg"のコマンドラインオプションによって、
-PDFの代わりにPostScriptファイル、またはSVGファイルを出力することもできます。
+
+郵便局により細かく場所が決められている宛先の郵便番号欄とは違って、
+差出人の郵便番号欄には定位置がありません。
+各種の「お年玉付き年賀はがき」の差出人の郵便番号欄は、大体決まった位置にあるので、
+printhaは、特に指定しない限り、「お年玉付き年賀はがき」に合わせた位置(
+[白紙のはがき画像](https://github.com/Torisugari/printha/blob/master/resources/bg.png)
+の赤い点線の部分)で郵便番号を書き込みます。しかし、それ以外の官製はがきでは
+[白紙のはがき画像](https://github.com/Torisugari/printha/blob/master/resources/bg.png)
+の青い部分に郵便番号欄があるので、設定を変更して下さい。
+
+###printhaのコマンドラインオプション
+上記の方法の他に、"--import <ファイルパス>"オプションで、設定を一時的に変更することができます。
+
+"--ps"と"--svg"のコマンドラインオプションをつけると、
+PDFの代わりにPostScriptファイル、またはSVGファイルを出力します。
+
+"--preview"のコマンドラインオプションを指定すると、
+[白紙のはがき画像](https://github.com/Torisugari/printha/blob/master/resources/bg.png)
+と重ね合わせて出力されます。この場合、そのまま印刷してしまわないように注意して下さい。
 
 ###printhaで出来ないこと
 

@@ -842,12 +842,11 @@ int main (int argc, char* argv[]) {
 "                          And this command updates <printha.config.txt>.\n"
 "  -o, --output <file>   : Set PDF file location instead of stdout and\n"
 "                          upadates <printha.config.txt>.\n"
-"  --import <file>       : Import settings from <file>, but temporally unlike\n"
-"                          -s or -o.\n"
+"  --import <file>       : Temporarily import settings from <file> \n"
 "  --export <file>       : Export current settings to <file>.\n"
-"  --svg                 : Temporally output data as a SVG file.\n"
-"  --ps                  : Temporally output data as a PostScript file.\n"
-"  --preview             : Temporally output data with background image file.\n"
+"  --svg                 : Temporarily output data as a SVG file.\n"
+"  --ps                  : Temporarily output data as a PostScript file.\n"
+"  --preview             : Temporarily output data with background image.\n"
       );
       skipPrint = true;
     }
@@ -875,7 +874,7 @@ int main (int argc, char* argv[]) {
       skipPrint = true;
     }
     else if ((0 == strcasecmp("-s", argv[i])) ||
-        (0 == strncasecmp("--sendfrom", argv[i], strlen("--sendfrom")))) {
+             (0 == strcasecmp("--sendfrom", argv[i]))) {
       i++;
       if (i < argc) {
         if (0 != char(*argv[i])) {
@@ -886,8 +885,7 @@ int main (int argc, char* argv[]) {
           settings.sendfrompath.erase();
         }
 
-        fprintf(stderr, "Saving settings at:%s\n",
-                        userDirConfig.c_str());
+        fprintf(stderr, "Saving settings at:%s\n", userDirConfig.c_str());
         settings::write(userDirConfig.c_str(), settings);
         skipPrint = true;
       }
@@ -897,7 +895,7 @@ int main (int argc, char* argv[]) {
       }
     }
     else if ((0 == strcasecmp("-o", argv[i])) ||
-        (0 == strcasecmp("--output", argv[i]))) {
+             (0 == strcasecmp("--output", argv[i]))) {
       i++;
       if (i < argc) {
         if (0 != char(*argv[i])) {
