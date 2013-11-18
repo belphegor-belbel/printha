@@ -1,4 +1,4 @@
-project(PrintHagakiAddress)
+project(printha)
 cmake_minimum_required(VERSION 2.8)
 
 include(FindPkgConfig)
@@ -26,6 +26,12 @@ pkg_check_modules(HARFBUZZ_ICU harfbuzz-icu)
 INCLUDE_DIRECTORIES(${HARFBUZZ_ICU_INCLUDE_DIRS})
 LINK_DIRECTORIES(${HARFBUZZ_ICU_LIBRARY_DIRS})
 LINK_LIBRARIES(${HARFBUZZ_ICU_LIBRARIES})
+
+# fontconfig
+pkg_check_modules(FONTCONFIG fontconfig)
+INCLUDE_DIRECTORIES(${FONTCONFIG_INCLUDE_DIRS})
+LINK_DIRECTORIES(${FONTCONFIG_LIBRARY_DIRS})
+LINK_LIBRARIES(${FONTCONFIG_LIBRARIES})
 
 set(CMAKE_C_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -DCMAKE_SOURCE_DIR=\\\"${CMAKE_SOURCE_DIR}\\\"")

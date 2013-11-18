@@ -35,6 +35,8 @@
 #include <harfbuzz/hb-ft.h>
 #include <harfbuzz/hb-icu.h>
 
+#include <fontconfig/fontconfig.h>
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -782,6 +784,11 @@ int main (int argc, char* argv[]) {
     CMAKE_SOURCE_DIR "/settings/sendto.txt";
   static const char kBuildDirFontFile[] =
     CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf";
+  static const FcChar8 kBuildDirOCRBFontFile[] =
+    CMAKE_SOURCE_DIR "/resources/OCRB_aizu_1_1/OCRB_aizu_1_1.ttf";
+
+  FcConfig* fontConfig = FcConfigGetCurrent();
+  bool success = FcConfigAppFontAddFile(fontConfig, kBuildDirOCRBFontFile);
 
   textformat_t settings;
 
@@ -1049,5 +1056,6 @@ int main (int argc, char* argv[]) {
   cairo_surface_flush(cs);
   cairo_surface_destroy(cs);
   FT_Done_FreeType(ftlib);
+  FcConfigDestroy(fontConfig);
   return 0;
 }

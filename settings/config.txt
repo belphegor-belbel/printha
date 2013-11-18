@@ -20,7 +20,8 @@ SendFromPath                   sendfrom.txt
 FontPath                       resources/ipaexm00201/ipaexm.ttf
 
 # 郵便番号の書体。フォント(横書き)はシステムの設定に依存する。
-ZipFont                        Serif
+# 例: Sans-Serif、 monospace、TimesNewRomanなど。
+ZipFont                        OCRB
 
 # 作成するファイル(PDFなど)のパス。空の場合は標準出力(stdout)へ出力する。
 OutputPath                     

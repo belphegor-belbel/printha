@@ -132,7 +132,7 @@
 
 #define PRINTHA_READ_TXT_RECT(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       std::sscanf(line.c_str(), "%30s %lf %lf %lf %lf", buff, \
                   &__KEY__.mStart.mX, \
                   &__KEY__.mStart.mY, \
@@ -141,19 +141,19 @@
     }
 #define PRINTHA_READ_TXT_POINT(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       std::sscanf(line.c_str(), "%30s %lf %lf", buff, \
                   &__KEY__.mX, \
                   &__KEY__.mY); \
     }
 #define PRINTHA_READ_TXT_DOUBLE(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       std::sscanf(line.c_str(), "%30s %lf", buff, &__KEY__);\
     }
 #define PRINTHA_READ_TXT_BOOLEAN(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       std::sscanf(line.c_str(), "%30s %5s", buff, data);\
       if (0 == strncasecmp("true", data, 4)) { \
         __KEY__ = true; \
@@ -164,10 +164,10 @@
     }
 #define PRINTHA_READ_TXT_STRING(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       read = std::sscanf(line.c_str(), "%30s %127s", buff, data);\
       if (read == 2) { \
-        __KEY__ = data; \
+        __KEY__ = trim(line.c_str() + std::strlen(#__KEY__)); \
       }\
       else {\
         __KEY__ = ""; \
@@ -176,7 +176,7 @@
 
 #define PRINTHA_READ_TXT_CHAR(__KEY__) \
     else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__) - 1))) { \
+                                    int(std::strlen(#__KEY__)))) { \
       read = std::sscanf(line.c_str(), "%30s %127s", buff, data);\
       if (read == 2) { \
         __KEY__ = unescape(data); \
@@ -286,6 +286,13 @@ const char* escape(const char aC, std::string& aBuffer) {
   }
 
   return aBuffer.c_str();
+}
+
+inline const char* trim(const char* aString) {
+  while(' ' == (*aString)) {
+    aString++;
+  }
+  return aString;
 }
 
 bool read(const char* aFileName, textformat_t& aSettings) {
