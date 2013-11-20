@@ -16,11 +16,15 @@
 # 空の場合は、差出人欄に何も記載しない。
 SendFromPath                   sendfrom.txt
 
-# 縦書きに対応したフォントへのパス。
-FontPath                       resources/ipaexm00201/ipaexm.ttf
+# 縦書きに対応した書体。
+# Sans-serifやTimes New Romanなど。
+Font                           IPAexMincho
 
-# 郵便番号の書体。フォント(横書き)はシステムの設定に依存する。
-# 例: Sans-Serif、 monospace、TimesNewRomanなど。
+# 縦書きに対応したフォントファイルへのパス。
+# FontとFontPathの両者が設定されている場合は、FontPathが優先される。
+FontPath                       
+
+# 郵便番号の書体(横書き)。
 ZipFont                        OCRB
 
 # 作成するファイル(PDFなど)のパス。空の場合は標準出力(stdout)へ出力する。

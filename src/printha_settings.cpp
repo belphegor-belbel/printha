@@ -131,8 +131,8 @@
   PRINTHA_WRITE_TXT_BOOLEAN(__FILENAME__,__KEY__.drawzipframe)
 
 #define PRINTHA_READ_TXT_RECT(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       std::sscanf(line.c_str(), "%30s %lf %lf %lf %lf", buff, \
                   &__KEY__.mStart.mX, \
                   &__KEY__.mStart.mY, \
@@ -140,20 +140,20 @@
                   &__KEY__.mEnd.mY); \
     }
 #define PRINTHA_READ_TXT_POINT(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       std::sscanf(line.c_str(), "%30s %lf %lf", buff, \
                   &__KEY__.mX, \
                   &__KEY__.mY); \
     }
 #define PRINTHA_READ_TXT_DOUBLE(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       std::sscanf(line.c_str(), "%30s %lf", buff, &__KEY__);\
     }
 #define PRINTHA_READ_TXT_BOOLEAN(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       std::sscanf(line.c_str(), "%30s %5s", buff, data);\
       if (0 == strncasecmp("true", data, 4)) { \
         __KEY__ = true; \
@@ -163,8 +163,8 @@
       } \
     }
 #define PRINTHA_READ_TXT_STRING(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       read = std::sscanf(line.c_str(), "%30s %127s", buff, data);\
       if (read == 2) { \
         __KEY__ = trim(line.c_str() + std::strlen(#__KEY__)); \
@@ -175,8 +175,8 @@
     }
 
 #define PRINTHA_READ_TXT_CHAR(__KEY__) \
-    else  if (0 == strncasecmp(#__KEY__, line.c_str(), \
-                                    int(std::strlen(#__KEY__)))) { \
+    else  if (0 == strncasecmp(#__KEY__ " ", line.c_str(), \
+                                    int(std::strlen(#__KEY__)) + 1)) { \
       read = std::sscanf(line.c_str(), "%30s %127s", buff, data);\
       if (read == 2) { \
         __KEY__ = unescape(data); \
@@ -297,6 +297,7 @@ inline const char* trim(const char* aString) {
 
 bool read(const char* aFileName, textformat_t& aSettings) {
   std::string& sendfrompath = aSettings.sendfrompath;
+  std::string& font = aSettings.font;
   std::string& fontpath = aSettings.fontpath;
   std::string& zipfont = aSettings.zipfont;
   std::string& outputpath = aSettings.outputpath;
@@ -324,6 +325,7 @@ bool read(const char* aFileName, textformat_t& aSettings) {
     }
     PRINTHA_READ_TXT_STRING(sendfrompath)
     PRINTHA_READ_TXT_STRING(outputpath)
+    PRINTHA_READ_TXT_STRING(font)
     PRINTHA_READ_TXT_STRING(fontpath)
     PRINTHA_READ_TXT_STRING(zipfont)
     PRINTHA_READ_TXT_CHAR(pagedelimiter)
@@ -343,6 +345,7 @@ void write(const char* aFileName, const textformat_t& aSettings,
   if (kWriteFormatCSRC == aWriteFormat) {
     flogf(aFileName, "void init(textformat_t& aSettings) {\n");
     PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.sendfrompath);
+    PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.font);
     PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.fontpath);
     PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.zipfont);
     PRINTHA_WRITE_CPP_STRING(aFileName, aSettings.outputpath);
@@ -355,6 +358,7 @@ void write(const char* aFileName, const textformat_t& aSettings,
   }
   else {
     const std::string& sendfrompath = aSettings.sendfrompath;
+    const std::string& font = aSettings.font;
     const std::string& fontpath = aSettings.fontpath;
     const std::string& zipfont = aSettings.zipfont;
     const std::string& outputpath = aSettings.outputpath;
@@ -366,6 +370,7 @@ void write(const char* aFileName, const textformat_t& aSettings,
     const personformat_t& sendfrom = aSettings.sendfrom;
 
     PRINTHA_WRITE_TXT_STRING(aFileName, sendfrompath);
+    PRINTHA_WRITE_TXT_STRING(aFileName, font);
     PRINTHA_WRITE_TXT_STRING(aFileName, fontpath);
     PRINTHA_WRITE_TXT_STRING(aFileName, zipfont);
     PRINTHA_WRITE_TXT_STRING(aFileName, outputpath);

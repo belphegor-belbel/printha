@@ -270,6 +270,9 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
   const bool isVertical = HB_DIRECTION_IS_VERTICAL(aDirection);
   const bool isBackward = HB_DIRECTION_IS_BACKWARD(aDirection);
+  bool useVerticalLayout = true;
+  useVerticalLayout &= isVertical;
+
   double absMaxAdvance = (isVertical)? aRect.height() : aRect.width();
   double linewidth = (isVertical)? aRect.width() : aRect.height();
 
@@ -455,7 +458,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
   cairo_font_face_t* caSeletedFont =
     cairo_ft_font_face_create_for_ft_face
-     (aFTSeletedFont, isVertical? FT_LOAD_VERTICAL_LAYOUT : 0);
+     (aFTSeletedFont, useVerticalLayout? FT_LOAD_VERTICAL_LAYOUT : 0);
 
   cairo_set_font_face(ca, caSeletedFont);
   cairo_set_font_size(ca, fontsize);
@@ -479,6 +482,17 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 #endif
     origin.mY += fontsize * (double(aFTSeletedFont->ascender) / 
                  double(aFTSeletedFont->height) - 0.5);
+  }
+  else if (!useVerticalLayout) {
+#ifdef DEBUG
+    fprintf(stderr, "FT_Face: a %d, d %d, h %d\n",
+            aFTSeletedFont->ascender,
+            aFTSeletedFont->descender,
+            aFTSeletedFont->height);
+#endif
+    origin.mY += fontsize* double(aFTSeletedFont->ascender) / 
+                 double(aFTSeletedFont->height);
+    origin.mX -= fontsize / 2.;
   }
 
   for (i = 0; i < length; i++) {
@@ -510,6 +524,8 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     glyphbuffer[glyphIndex].x = origin.mX;
     glyphbuffer[glyphIndex].y = origin.mY;
 
+    // XXX I'm quite sure FT_LOAD_VERTICAL_LAYOUT + x_offset/y_offset
+    //      are incorrect.
     if (!isVertical) {
       glyphbuffer[glyphIndex].x += (fontsize * hbPosition[i].x_offset) /
                                      kXFactor;
@@ -617,7 +633,7 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   }
 }
 
-void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
+void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
            const std::string& aArgv, const textformat_t& aSettings) {
 
   if (aSettings.preview) {
@@ -744,6 +760,8 @@ void paint(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     drawDebugRect(c, zipRects2[4]);
     drawDebugRect(c, zipRects2[5]);
     drawDebugRect(c, zipRects2[6]);
+    // Stamp area
+    drawDebugRect(c, rect_t(0., 0., 35., 56.));
 #endif
     cairo_show_page(c);
     cairo_destroy(c);
@@ -782,13 +800,10 @@ int main (int argc, char* argv[]) {
     CMAKE_SOURCE_DIR "/settings/sendfrom.txt";
   static const char kBuildDirSendToFile[] =
     CMAKE_SOURCE_DIR "/settings/sendto.txt";
-  static const char kBuildDirFontFile[] =
+  static const FcChar8 kBuildDirFontFile[] =
     CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf";
   static const FcChar8 kBuildDirOCRBFontFile[] =
     CMAKE_SOURCE_DIR "/resources/OCRB_aizu_1_1/OCRB_aizu_1_1.ttf";
-
-  FcConfig* fontConfig = FcConfigGetCurrent();
-  bool success = FcConfigAppFontAddFile(fontConfig, kBuildDirOCRBFontFile);
 
   textformat_t settings;
 
@@ -860,7 +875,6 @@ int main (int argc, char* argv[]) {
     else if ((0 == strcasecmp("-i", argv[i])) ||
         (0 == strcasecmp("--init", argv[i]))) {
       settings::read(kBuildDirConfigFile, settings);
-      settings.fontpath = kBuildDirFontFile;
 
       realpath("sendfrom.txt", fileNameBuffer);
       settings.sendfrompath = fileNameBuffer;
@@ -1022,7 +1036,38 @@ int main (int argc, char* argv[]) {
   }
 
   FT_Face ftSeletedFont;
-  fte = FT_New_Face(ftlib, settings.fontpath.c_str(), 0, &ftSeletedFont);
+
+  FcInit();
+  FcConfigAppFontAddFile(nullptr, kBuildDirFontFile);
+  FcConfigAppFontAddFile(nullptr, kBuildDirOCRBFontFile);
+
+  int fontindex = 0;
+  const char* fontpath = nullptr;
+  FcPattern* fcFont = nullptr;
+  if (settings.fontpath.empty()) {
+    const char* fontface = (settings.font.empty())?
+                             "Serif" : settings.font.c_str();
+    FcPattern* pattern = FcNameParse((const FcChar8*) fontface);
+    FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+
+    FcResult fcResult;
+    FcPatternAddBool(pattern, FC_VERTICAL_LAYOUT, FcTrue);
+    fcFont = FcFontMatch(nullptr, pattern, &fcResult);
+    FcPatternDestroy(pattern);
+
+    FcChar8* ufontpath;
+    FcPatternGetString(fcFont, FC_FILE, 0, &ufontpath);
+    fontpath = (const char*)(ufontpath);
+
+    FcPatternGetInteger(fcFont, FC_INDEX, 0, &fontindex);
+  }
+  else {
+    fontpath = settings.fontpath.c_str();
+  }
+
+  fte = FT_New_Face(ftlib, fontpath, fontindex, &ftSeletedFont);
+  FcPatternDestroy(fcFont);
 
   if (fte) {
     fprintf(stderr, "FT_New_Face:0x%x, %s\n", fte, settings.fontpath.c_str());
@@ -1042,13 +1087,13 @@ int main (int argc, char* argv[]) {
 
   if (!sendtoData.empty()) {
     if (kSVG == printMode) {
-      paint(ftSeletedFont, cs, sendtoData, settings);
+      printPage(ftSeletedFont, cs, sendtoData, settings);
     }
     else {
       std::istringstream iss(sendtoData);
       std::string row;
       while (std::getline(iss, row, settings.pagedelimiter)) {
-        paint(ftSeletedFont, cs, row, settings);
+        printPage(ftSeletedFont, cs, row, settings);
       }
     }
   }
@@ -1056,6 +1101,5 @@ int main (int argc, char* argv[]) {
   cairo_surface_flush(cs);
   cairo_surface_destroy(cs);
   FT_Done_FreeType(ftlib);
-  FcConfigDestroy(fontConfig);
   return 0;
 }

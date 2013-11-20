@@ -1,7 +1,8 @@
 void init(textformat_t& aSettings) {
   aSettings.sendfrompath = "sendfrom.txt";
-  aSettings.fontpath = "resources/ipaexm00201/ipaexm.ttf";
-  aSettings.zipfont = "Serif";
+  aSettings.font = "IPAexMincho";
+  aSettings.fontpath = "";
+  aSettings.zipfont = "OCRB";
   aSettings.outputpath = "";
   aSettings.pagedelimiter = '|';
   aSettings.drawnenga = false;

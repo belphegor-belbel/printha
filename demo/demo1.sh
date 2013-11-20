@@ -1,6 +1,6 @@
 #!/bin/sh
 printha --init
-printha < sendto.txt > 1/sendto.pdf
+printha --preview < sendto.txt > 1/sendto.pdf
 printha --svg < sendto.txt > 1/sendto.svg
 printha --ps < sendto.txt > 1/sendto.ps
 printha --import $(dirname $0)/../settings/config.company.txt < sendto.txt > 1/president.pdf

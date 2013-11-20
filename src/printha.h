@@ -81,6 +81,7 @@ struct personformat_t {
 struct textformat_t {
   std::string sendfrompath;
   std::string outputpath;
+  std::string font;
   std::string fontpath;
   std::string zipfont;
   char pagedelimiter;
