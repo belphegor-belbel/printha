@@ -1,0 +1,3 @@
+#!/bin/sh
+
+xulrunner-17.0 ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha

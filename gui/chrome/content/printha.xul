@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<window title="Printha"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		width="800px"
+		height="500px"
+        orient="vertical"
+        windowtype="window:printha">
+  <script type="application/javascript"
+          src="chrome://printha/content/printha.js"/>
+<tabbox>
+<tabs>
+<tab label="基本"/>
+<tab label="プレビュー" oncommand="print(true);"/>
+</tabs>
+<tabpanels>
+<tabpanel orient="vertical">
+  <separator/>
+  <groupbox id="csv-box">
+    <caption label="宛先のデータ"/>
+    <description>宛先の姓・名・郵便番号・住所が記載されているCSVファイルを選択して下さい。
+    </description>
+    <hbox>
+      <textbox id="csv-path" readonly="true" flex="1"/>
+      <button label="ファイルの選択..." oncommand="selectCSV();"/>
+    </hbox>
+    <groupbox class="small">
+      <caption label="先頭の情報"/>
+      <hbox flex="1">
+      <label value="姓" control="sendto.fname"/>
+      <textbox id="sendto.fname" flex="1" readonly="true"/>
+      <label value="名" control="sendto.sname"/>
+      <textbox id="sendto.sname" flex="1" readonly="true"/>
+      <label value="郵便番号" control="sendto.zipcode" />
+      <textbox id="sendto.zipcode" size="8" readonly="true"/>
+      </hbox>
+      <label value="住所" control="sendto.name" />
+      <textbox id="sendto.address" multiline="true" flex="1" readonly="true"/>
+    </groupbox>
+  </groupbox>
+  <groupbox id="sender-box">
+    <caption label="差出人"/>
+    <description>差出人の情報を記載して下さい。</description>
+    <groupbox class="small">
+      <caption/>
+      <hbox flex="1">
+      <label value="姓名" control="sendfrom.name"/>
+      <textbox id="sendfrom.name" flex="1"/>
+      <label value="郵便番号" control="sendto.zipcode" />
+      <textbox id="sendfrom.zipcode" size="8"/>
+      </hbox>
+      <label value="住所" control="sendfrom.address" />
+      <textbox id="sendfrom.address" multiline="true" flex="1"/>
+    </groupbox>
+    <hbox>
+      <button label="ファイルから読み込む..." oncommand="loadSender();"/>
+      <button label="ファイルに保存する..." oncommand="saveSender();"/>
+    </hbox>
+  </groupbox>
+  <separator/>
+  <groupbox id="font-box">
+    <caption label="フォント"/>
+    <description>フォントを変更したい場合は選択して下さい。</description>
+    <hbox>
+      <groupbox>
+      <label value="名前・住所のフォント:"/>
+      <menulist id="font-list" flex="1">
+        <menupopup>
+          <menuitem label="IPAexMincho" value="IPAexMincho" />
+          <menuseparator/>
+        </menupopup>
+      </menulist>
+      </groupbox>
+      <groupbox>
+      <label value="郵便番号のフォント"/>
+      <menulist id="zipfont-list" flex="1">
+        <menupopup>
+          <menuitem label="OCRB" value="OCRB" />
+          <menuseparator/>
+        </menupopup>
+      </menulist>
+      </groupbox>
+    </hbox>
+  </groupbox>
+  <separator/>
+  <button label="PDFファイルを保存する..." oncommand="print(false);"/>
+  <separator/>
+</tabpanel>
+  <tabpanel orient="vertical">
+    <browser id="content"
+           type="content-primary"
+           name="content"
+           src="about:blank"
+           flex="1"
+           disablehistory="true"
+           style="min-height : 296px; min-width : 200px;"
+           onclick="event.preventDefault();"
+           />
+  </tabpanel>
+</tabpanels>
+</tabbox>
+</window>

@@ -56,6 +56,10 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 configure_file ("${PROJECT_SOURCE_DIR}/src/uninstall.sh.in"
                 "${PROJECT_BINARY_DIR}/uninstall.sh")
 
+# GUI Launcher
+configure_file ("${PROJECT_SOURCE_DIR}/src/printha.gui.in"
+                "${PROJECT_BINARY_DIR}/printha.gui")
+
 add_executable(printha src/printha_settings.cpp src/printha.cpp)
 
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")

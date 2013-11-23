@@ -255,7 +255,7 @@ reverseCairoCluster(cairo_text_cluster_t aBuff[], uint32_t aLength) {
   }
 }
 
-double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
+double printString(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
                    const char* aString, const rect_t& aRect,
                    double& aMaxFontSize, double aWhiteSpace,
                    bool aStretch, bool aBottom = false, bool aRed = false,
@@ -287,7 +287,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 #endif
 
   // [72 dot per inch] = [1 dot per point]
-  FT_Error fte = FT_Set_Char_Size(aFTSeletedFont, 0, fontsize,
+  FT_Error fte = FT_Set_Char_Size(aFTSelectedFont, 0, fontsize,
                                   FT_UInt(x_resolution), FT_UInt(y_resolution));
 
   if (fte) {
@@ -295,7 +295,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     exit(-1);
   }
 
-  hb_font_t* hbSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
+  hb_font_t* hbSelectedFont = hb_ft_font_create(aFTSelectedFont, nullptr);
 
 
   hb_buffer_t* buff = hb_buffer_create();
@@ -310,7 +310,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   hb_buffer_add_utf8(buff, aString, -1, 0, -1);
   hb_buffer_guess_segment_properties(buff);
 
-  hb_shape(hbSeletedFont, buff, nullptr, 0);
+  hb_shape(hbSelectedFont, buff, nullptr, 0);
 
   uint32_t length;
   hb_glyph_info_t* hbInfo = hb_buffer_get_glyph_infos(buff, &length);
@@ -356,6 +356,17 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
             "x_offset :%8d, y_offset : %8d\n",
             hbPosition[i].x_advance, hbPosition[i].y_advance, 
             hbPosition[i].x_offset, hbPosition[i].y_offset);
+
+    hb_glyph_extents_t extents;
+    bool success = hb_font_get_glyph_extents_for_origin
+      (hbSelectedFont, hbInfo[i].codepoint, aDirection, &extents);
+    if (success) {
+      fprintf(stderr, "x_bearing:%8d, y_bearing: %8d\n",
+              extents.x_bearing, extents.y_bearing);
+      fprintf(stderr, "width    :%8d, height   : %8d\n",
+              extents.width, extents.height);
+    }
+
     fprintf(stderr, "codepoint:0x%x, cluster:0x%x, mask:0x%x\n",
             hbInfo[i].codepoint, hbInfo[i].cluster, hbInfo[i].mask);
 #endif
@@ -374,7 +385,7 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   }
 
   if (fontsize <= 0.) {
-    hb_font_destroy(hbSeletedFont);
+    hb_font_destroy(hbSelectedFont);
     hb_buffer_destroy(buff);
     return 0.;
   }
@@ -404,14 +415,14 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     }
   }
 
-  fte = FT_Set_Char_Size(aFTSeletedFont, 0, fontsize,
+  fte = FT_Set_Char_Size(aFTSelectedFont, 0, fontsize,
                          FT_UInt(x_resolution), FT_UInt(y_resolution));
   if (fte) {
     fprintf(stderr, "FT_Set_Char_Size:0x%x\n", fte);
     exit(-1);
   }
 
-  hb_font_destroy(hbSeletedFont);
+  hb_font_destroy(hbSelectedFont);
 
   hb_segment_properties_t properties;
   hb_buffer_get_segment_properties(buff, &properties);
@@ -421,8 +432,8 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   hb_buffer_set_segment_properties(buff, &properties);
   hb_buffer_add_utf8(buff, aString, -1, 0, -1);
 
-  hbSeletedFont = hb_ft_font_create(aFTSeletedFont, nullptr);
-  hb_shape(hbSeletedFont, buff, nullptr, 0);
+  hbSelectedFont = hb_ft_font_create(aFTSelectedFont, nullptr);
+  hb_shape(hbSelectedFont, buff, nullptr, 0);
 
   hbInfo = hb_buffer_get_glyph_infos(buff, &length);
   hbPosition = hb_buffer_get_glyph_positions(buff, &length);
@@ -456,11 +467,11 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     cairo_set_source_rgb(ca, 0., 0., 0.);
   }
 
-  cairo_font_face_t* caSeletedFont =
+  cairo_font_face_t* caSelectedFont =
     cairo_ft_font_face_create_for_ft_face
-     (aFTSeletedFont, useVerticalLayout? FT_LOAD_VERTICAL_LAYOUT : 0);
+     (aFTSelectedFont, useVerticalLayout? FT_LOAD_VERTICAL_LAYOUT : 0);
 
-  cairo_set_font_face(ca, caSeletedFont);
+  cairo_set_font_face(ca, caSelectedFont);
   cairo_set_font_size(ca, fontsize);
 
   uint32_t glyphIndex = 0;
@@ -476,22 +487,22 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   if (!isVertical) {
 #ifdef DEBUG
     fprintf(stderr, "FT_Face: a %d, d %d, h %d\n",
-            aFTSeletedFont->ascender,
-            aFTSeletedFont->descender,
-            aFTSeletedFont->height);
+            aFTSelectedFont->ascender,
+            aFTSelectedFont->descender,
+            aFTSelectedFont->height);
 #endif
-    origin.mY += fontsize * (double(aFTSeletedFont->ascender) / 
-                 double(aFTSeletedFont->height) - 0.5);
+    origin.mY += fontsize * (double(aFTSelectedFont->ascender) / 
+                 double(aFTSelectedFont->height) - 0.5);
   }
   else if (!useVerticalLayout) {
 #ifdef DEBUG
     fprintf(stderr, "FT_Face: a %d, d %d, h %d\n",
-            aFTSeletedFont->ascender,
-            aFTSeletedFont->descender,
-            aFTSeletedFont->height);
+            aFTSelectedFont->ascender,
+            aFTSelectedFont->descender,
+            aFTSelectedFont->height);
 #endif
-    origin.mY += fontsize* double(aFTSeletedFont->ascender) / 
-                 double(aFTSeletedFont->height);
+    origin.mY += fontsize* double(aFTSelectedFont->ascender) / 
+                 double(aFTSelectedFont->height);
     origin.mX -= fontsize / 2.;
   }
 
@@ -532,7 +543,20 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
       glyphbuffer[glyphIndex].y -= (fontsize * hbPosition[i].y_offset) /
                                      kYFactor;
     }
+    else if (!useVerticalLayout) {
+#if 0
+      cairo_scaled_font_t* scaledfont = cairo_get_scaled_font(ca);
+      cairo_text_extents_t extents;
+      cairo_scaled_font_glyph_extents (scaledfont, &glyphbuffer[glyphIndex], 1,
+                                       &extents);
+      glyphbuffer[glyphIndex].x -= extents.x_bearing;
+      glyphbuffer[glyphIndex].y -= extents.y_bearing;
 
+      if (extents.width < fontsize) {
+        glyphbuffer[glyphIndex].x += (fontsize - extents.width) / 2;
+      }
+#endif
+    }
     uint32_t cluster_start = hbInfo[i].cluster;
     uint32_t cluster_next = 0;
     if (isBackward) {
@@ -576,8 +600,8 @@ double printString(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   cairo_surface_flush(aCS);
 
   cairo_destroy(ca);
-  cairo_font_face_destroy(caSeletedFont);
-  hb_font_destroy(hbSeletedFont);
+  cairo_font_face_destroy(caSelectedFont);
+  hb_font_destroy(hbSelectedFont);
   hb_buffer_destroy(buff);
 
   return origin.mY - aRect.mStart.mY;
@@ -594,7 +618,7 @@ inline uint32_t countLineNumber(const char* aString, const char aDelimiter) {
   return count;
 }
 
-void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
+void printLines(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
                 const std::string& aString, const frameformat_t& aFrame) {
   if (aFrame.rect.width() <= 0. || aFrame.rect.height() <= 0.) {
     return;
@@ -603,7 +627,7 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   double maxFontSize = aFrame.fontsize;
   uint32_t count = countLineNumber(aString.c_str(), aFrame.linebreak);
   if (1 == count) {
-    printString(aFTSeletedFont, aCS, aString.c_str(), aFrame.rect,
+    printString(aFTSelectedFont, aCS, aString.c_str(), aFrame.rect,
                 maxFontSize, aFrame.whitespace, aFrame.stretch);
     return;
   }
@@ -620,7 +644,7 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     std::getline(iss, line, aFrame.linebreak);
 
     rect_t linerect(start, width, height);
-    double advance = printString(aFTSeletedFont, aCS, line.c_str(), linerect,
+    double advance = printString(aFTSelectedFont, aCS, line.c_str(), linerect,
                                  maxFontSize, aFrame.whitespace, aFrame.stretch,
                                  aFrame.bottom && (!isFirstLine));
     if (isFirstLine) {
@@ -633,7 +657,7 @@ void printLines(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   }
 }
 
-void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
+void printPage(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
            const std::string& aArgv, const textformat_t& aSettings) {
 
   if (aSettings.preview) {
@@ -671,7 +695,7 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
     std::istringstream iss(aArgv);
     if (iss && !iss.eof()) {
       std::getline(iss, token, aSettings.sendto.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendto.name);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendto.name);
     }
 
     if (iss && !iss.eof()) {
@@ -684,7 +708,7 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
     if (iss && !iss.eof()) {
       std::getline(iss, token, aSettings.sendto.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendto.addr);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendto.addr);
     }
 
     int i;
@@ -693,7 +717,7 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
         break;
       }
       std::getline(iss, token, aSettings.sendto.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendto.extra[i]);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendto.extra[i]);
     }
   }
 
@@ -706,7 +730,7 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
   else {
     if (file) {
       std::getline(file, token, aSettings.sendfrom.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendfrom.name);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendfrom.name);
     }
 
     int32_t i;
@@ -730,7 +754,7 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
 
     if (file) {
       std::getline(file, token, aSettings.sendfrom.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendfrom.addr);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendfrom.addr);
     }
 
     for (i = 0; i < kExtraSize; i++) {
@@ -738,14 +762,14 @@ void printPage(FT_Face aFTSeletedFont, cairo_surface_t* aCS,
         break;
       }
       std::getline(file, token, aSettings.sendfrom.dlmt);
-      printLines(aFTSeletedFont, aCS, token, aSettings.sendfrom.extra[i]);
+      printLines(aFTSelectedFont, aCS, token, aSettings.sendfrom.extra[i]);
     }
   }
 
   if (aSettings.drawnenga) {
     double fontsize = 14.;
-    printString(aFTSeletedFont, aCS, "\xe5\xb9\xb4\xe8\xb3\x80",
-                rect_t(27., 103., 66., 117.),
+    printString(aFTSelectedFont, aCS, "\xe5\xb9\xb4\xe8\xb3\x80",
+                rect_t(35., 115., 70., 135.),
                 fontsize, 0., true, false, true, HB_DIRECTION_LTR);
   }
 
@@ -1035,7 +1059,7 @@ int main (int argc, char* argv[]) {
     exit(-1);
   }
 
-  FT_Face ftSeletedFont;
+  FT_Face ftSelectedFont;
 
   FcInit();
   FcConfigAppFontAddFile(nullptr, kBuildDirFontFile);
@@ -1066,7 +1090,7 @@ int main (int argc, char* argv[]) {
     fontpath = settings.fontpath.c_str();
   }
 
-  fte = FT_New_Face(ftlib, fontpath, fontindex, &ftSeletedFont);
+  fte = FT_New_Face(ftlib, fontpath, fontindex, &ftSelectedFont);
   FcPatternDestroy(fcFont);
 
   if (fte) {
@@ -1087,13 +1111,13 @@ int main (int argc, char* argv[]) {
 
   if (!sendtoData.empty()) {
     if (kSVG == printMode) {
-      printPage(ftSeletedFont, cs, sendtoData, settings);
+      printPage(ftSelectedFont, cs, sendtoData, settings);
     }
     else {
       std::istringstream iss(sendtoData);
       std::string row;
       while (std::getline(iss, row, settings.pagedelimiter)) {
-        printPage(ftSeletedFont, cs, row, settings);
+        printPage(ftSelectedFont, cs, row, settings);
       }
     }
   }

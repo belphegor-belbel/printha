@@ -1,0 +1,1 @@
+pref("toolkit.defaultChromeURI", "chrome://printha/content/");pref("toolkit.singletonWindowType", "window:printha");
