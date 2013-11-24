@@ -112,34 +112,21 @@ void printZipcode(cairo_surface_t* aCS, const char* aZipcode,
 
   const char* ptr = aZipcode;
 
+  cairo_select_font_face(c, aFontFace,
+                         CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_status_t cs = cairo_status(c);
+  if (cs) {
+    fprintf(stderr, "cairo_select_font_face:%s",
+                    cairo_status_to_string(cs));
+  }
+
+  cairo_set_source_rgb(c, 0., 0., 0.);
+  cairo_set_font_size(c, PT_TO_MM(aFontsize));
+
   uint32_t i;
   for (i =0; i < 7; i++) {
     const point_t& start = aRects[i].mStart;
     const point_t& end = aRects[i].mEnd;
-
-    if (aFrameType == DRAW_SENDTO) {
-      cairo_set_source_rgb(c, 1., 0.3, 0.3);
-      double linewidth = (i < 3)? ZIPRECT_TICK_LINE_WIDTH :
-                                  ZIPRECT_THIN_LINE_WIDTH;
-
-      cairo_set_line_width (c, linewidth);
-      double width = end.mX - start.mX + (linewidth * 2);
-      double height = end.mY - start.mY + (linewidth * 2);
-      cairo_rectangle(c, start.mX - (linewidth),
-                         start.mY - (linewidth),
-                         width, height);
-      cairo_stroke(c);
-    }
-
-    cairo_select_font_face(c, aFontFace,
-                           CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-    cairo_status_t cs = cairo_status(c);
-    if (cs) {
-      fprintf(stderr, "cairo_select_font_face:%s",
-                      cairo_status_to_string(cs));
-    }
-    cairo_set_source_rgb(c, 0., 0., 0.);
-    cairo_set_font_size(c, PT_TO_MM(aFontsize));
 
     char buff = char(*ptr);
     
@@ -176,8 +163,19 @@ void printZipcode(cairo_surface_t* aCS, const char* aZipcode,
   }
 
   //draw hyhpen
-  if (aFrameType == DRAW_SENDTO) { 
-    cairo_set_source_rgb(c, 1., 0.3, 0.3);
+  cairo_set_source_rgb(c, 1., 0.3, 0.3);
+  if (aFrameType == DRAW_SENDTO) {
+    for (i = 0; i < 7; i++) {
+      double linewidth = (i < 3)? ZIPRECT_TICK_LINE_WIDTH :
+                                  ZIPRECT_THIN_LINE_WIDTH;
+      cairo_set_line_width (c, linewidth);
+      double width = aRects[i].width() + (linewidth * 2);
+      double height = aRects[i].height() + (linewidth * 2);
+
+      cairo_rectangle(c, aRects[i].mStart.mX - (linewidth),
+                         aRects[i].mStart.mY - (linewidth),
+                         width, height);
+    }
     cairo_set_line_width(c, ZIPRECT_TICK_LINE_WIDTH);
     cairo_move_to(c, aRects[2].mEnd.mX + ZIPRECT_TICK_LINE_WIDTH, 
                    (aRects[2].mStart.mY + aRects[2].mEnd.mY)/2);
@@ -186,7 +184,6 @@ void printZipcode(cairo_surface_t* aCS, const char* aZipcode,
     cairo_stroke(c);
   }
   else if (aFrameType == DRAW_SENDFROM){
-    cairo_set_source_rgb(c, 1., 0.3, 0.3);
     cairo_set_line_width(c, ZIPRECT_THIN_LINE_WIDTH);
     double dashes[] = {.6, .5};
     cairo_set_dash (c, dashes, 2, 0.);
@@ -850,16 +847,7 @@ int main (int argc, char* argv[]) {
   realpath("printha.config.txt", fileNameBuffer);
   std::string userDirConfig = fileNameBuffer;
 
-  bool isUserDirConfig = settings::read(userDirConfig.c_str(), settings);
-  if (isUserDirConfig) {
-#ifdef DEBUG
-    fprintf(stderr, "Successfully loaded config file:%s\n",
-                    userDirConfig.c_str());
-#endif
-  }
-  else {
-    fprintf(stderr, "Missing file:%s\n", userDirConfig.c_str());
-  }
+  settings::read(userDirConfig.c_str(), settings);
 
   int32_t i;
   std::string sendtoData;
@@ -966,7 +954,7 @@ int main (int argc, char* argv[]) {
       if (i < argc) {
         if (0 != char(*argv[i])) {
           realpath(argv[i], fileNameBuffer);
-          isUserDirConfig = settings::read(fileNameBuffer, settings);
+          bool isUserDirConfig = settings::read(fileNameBuffer, settings);
           if (isUserDirConfig) {
 #ifdef DEBUG
             fprintf(stderr, "Successfully loaded config file:%s\n",

@@ -4,8 +4,6 @@
 <window title="Printha"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-		width="800px"
-		height="500px"
         orient="vertical"
         windowtype="window:printha">
   <script type="application/javascript"
@@ -13,6 +11,7 @@
 <tabbox>
 <tabs>
 <tab label="基本"/>
+<tab label="詳細"/>
 <tab label="プレビュー" oncommand="print(true);"/>
 </tabs>
 <tabpanels>
@@ -26,13 +25,15 @@
       <textbox id="csv-path" readonly="true" flex="1"/>
       <button label="ファイルの選択..." oncommand="selectCSV();"/>
     </hbox>
-    <groupbox class="small">
+    <groupbox>
       <caption label="先頭の情報"/>
       <hbox flex="1">
       <label value="姓" control="sendto.fname"/>
       <textbox id="sendto.fname" flex="1" readonly="true"/>
       <label value="名" control="sendto.sname"/>
       <textbox id="sendto.sname" flex="1" readonly="true"/>
+      </hbox>
+      <hbox flex="1">
       <label value="郵便番号" control="sendto.zipcode" />
       <textbox id="sendto.zipcode" size="8" readonly="true"/>
       </hbox>
@@ -45,9 +46,11 @@
     <description>差出人の情報を記載して下さい。</description>
     <groupbox class="small">
       <caption/>
-      <hbox flex="1">
+      <vbox flex="1">
       <label value="姓名" control="sendfrom.name"/>
-      <textbox id="sendfrom.name" flex="1"/>
+      <textbox id="sendfrom.name" flex="1" multiline="true"/>
+      </vbox>
+      <hbox>
       <label value="郵便番号" control="sendto.zipcode" />
       <textbox id="sendfrom.zipcode" size="8"/>
       </hbox>
@@ -55,33 +58,9 @@
       <textbox id="sendfrom.address" multiline="true" flex="1"/>
     </groupbox>
     <hbox>
+      <spacer flex="1"/>
       <button label="ファイルから読み込む..." oncommand="loadSender();"/>
       <button label="ファイルに保存する..." oncommand="saveSender();"/>
-    </hbox>
-  </groupbox>
-  <separator/>
-  <groupbox id="font-box">
-    <caption label="フォント"/>
-    <description>フォントを変更したい場合は選択して下さい。</description>
-    <hbox>
-      <groupbox>
-      <label value="名前・住所のフォント:"/>
-      <menulist id="font-list" flex="1">
-        <menupopup>
-          <menuitem label="IPAexMincho" value="IPAexMincho" />
-          <menuseparator/>
-        </menupopup>
-      </menulist>
-      </groupbox>
-      <groupbox>
-      <label value="郵便番号のフォント"/>
-      <menulist id="zipfont-list" flex="1">
-        <menupopup>
-          <menuitem label="OCRB" value="OCRB" />
-          <menuseparator/>
-        </menupopup>
-      </menulist>
-      </groupbox>
     </hbox>
   </groupbox>
   <separator/>
@@ -89,13 +68,149 @@
   <separator/>
 </tabpanel>
   <tabpanel orient="vertical">
+    <tabbox>
+      <tabs>
+        <tab label="フォント"/>
+        <tab label="レイアウト"/>
+        <tab label="その他"/>
+      </tabs>
+      <tabpanels>
+        <tabpanel orient="vertical">
+
+    <description>フォントを変更したい場合は選択して下さい。</description>
+    <hbox>
+      <label value="名前・住所のフォント:"/>
+      <menulist id="font-list" flex="1">
+        <menupopup>
+          <menuitem label="IPAexMincho" value="IPAexMincho" />
+          <menuseparator/>
+        </menupopup>
+      </menulist>
+      <label value="郵便番号のフォント"/>
+      <menulist id="zipfont-list" flex="1">
+        <menupopup>
+          <menuitem label="OCRB" value="OCRB" />
+          <menuseparator/>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <vbox>
+      <description>sendto.zipfontsize</description>
+      <textbox id="sendto.zipfontsize" type="number" min="1" max="64"
+               value="16"/>
+    </vbox>
+    <vbox>
+      <description>sendfrom.zipfontsize</description>
+      <textbox id="sendfrom.zipfontsize" type="number" min="1" max="64"
+               value="12"/>
+    </vbox>
+    <vbox>
+      <description>sendto.name.fontsize</description>
+      <textbox id="sendto.name.fontsize" type="number" min="1" max="64"
+               value="32"/>
+    </vbox>
+    <vbox>
+      <description>sendto.addr.fontsize</description>
+      <textbox id="sendto.addr.fontsize" type="number" min="1" max="64"
+               value="20"/>
+    </vbox>
+    <vbox>
+      <description>sendfrom.addr.fontsize</description>
+      <textbox id="sendfrom.addr.fontsize" type="number" min="1" max="64"
+               value="20"/>
+    </vbox>
+    <vbox>
+      <description>sendfrom.name.fontsize</description>
+      <textbox id="sendfrom.name.fontsize" type="number" min="1" max="64"
+               value="20"/>
+    </vbox>
+
+        </tabpanel>
+        <tabpanel orient="vertical">
+
+<checkbox id="sendto.name.stretch"
+          label="sendto.name.stretch"
+          checked="true"/>
+<checkbox id="sendfrom.name.stretch"
+          label="sendfrom.name.stretch"
+          checked="true"/>
+<checkbox id="sendto.addr.stretch"
+          label="sendto.addr.stretch"
+          checked="false"/>
+<checkbox id="sendfrom.addr.stretch"
+          label="sendfrom.addr.stretch"
+          checked="false"/>
+
+<checkbox id="sendto.name.bottom"
+          label="sendto.name.bottom"
+          checked="false"/>
+<checkbox id="sendfrom.name.bottom"
+          label="sendfrom.name.bottom"
+          checked="false"/>
+<checkbox id="sendto.addr.bottom"
+          label="sendto.addr.bottom"
+          checked="true"/>
+<checkbox id="sendfrom.addr.bottom"
+          label="sendfrom.addr.bottom"
+          checked="true"/>
+
+
+<vbox>
+  <description>sendfrom_zipframe_offset</description>
+  <textbox id="sendfrom_zipframe_offset"
+           value="0.0 0.0"/>
+</vbox>
+
+<vbox>
+  <description>sendto.name.rect</description>
+  <textbox id="sendto.name.rect"
+           value="117.732283 80.000000 165.732283 360.000000"/>
+</vbox>
+<vbox>
+  <description>sendto.addr.rect </description>
+  <textbox id="sendto.addr.rect"
+           value="219.464567 80.000000 283.464567 330.000000"/>
+</vbox>
+
+
+<vbox>
+  <description>sendfrom.name.rect</description>
+  <textbox id="sendfrom.name.rect"
+           value="0.000000 200.000000 32.000000 340.000000"/>
+</vbox>
+<vbox>
+  <description>sendfrom.addr.rect</description>
+  <textbox id="sendfrom.addr.rect"
+           value="32.000000 160.000000 80.000000 340.000000"/>
+</vbox>
+
+        </tabpanel>
+        <tabpanel orient="vertical">
+<checkbox id="drawnenga"
+          label="drawnenga"
+          checked="false"/>
+<checkbox id="sendto.drawzipframe"
+          label="sendto.drawzipframe"
+          checked="false"/>
+<checkbox id="sendfrom.drawzipframe"
+          label="sendfrom.drawzipframe"
+          checked="false"/>
+  <description>敬称</description>
+  <textbox id="sendto.honorifics" value="様"/>
+        </tabpanel>
+      </tabpanels>
+    </tabbox>
+
+
+  </tabpanel>
+  <tabpanel orient="vertical">
     <browser id="content"
            type="content-primary"
            name="content"
            src="about:blank"
            flex="1"
            disablehistory="true"
-           style="min-height : 296px; min-width : 200px;"
+           style="min-height : 149px; min-width : 101px;"
            onclick="event.preventDefault();"
            />
   </tabpanel>

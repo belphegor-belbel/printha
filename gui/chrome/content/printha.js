@@ -51,9 +51,10 @@ var gPrinthaSettings = {
 
   get addressData() {
     var length = this._addressData.length;
-    var data = this.formatLine(this._addressData[0]);
+    var hono = this.hono;
+    var data = this.formatLine(this._addressData[0], hono);
     for (var i = 1; i < length; i++) {
-      var temp = this.formatLine(this._addressData[i]);
+      var temp = this.formatLine(this._addressData[i], hono);
       if (temp) {
         data += "|" + temp;
       }
@@ -61,11 +62,12 @@ var gPrinthaSettings = {
     return data;
   },
 
-  formatLine: function (aLine) {
-    if (aLine.length < 4) {
+  formatLine: function (aLine, aHonorifics) {
+    if (!aLine || aLine.length < 4) {
       return "";
     }
-    var data = aLine[0] + " " + aLine[1] + "様;" + aLine[2] + ";" + aLine[3];
+    var data = aLine[0] + " " + aLine[1] + aHonorifics + ";"
+                        + aLine[2] + ";" + aLine[3];
     if (aLine.length > 4 && aLine[4]) {
       data += "\n" + aLine[4] + ";";
     }
@@ -78,10 +80,49 @@ var gPrinthaSettings = {
       var key = this.configKeys[i]; 
       data += key + " " + this[key] + "\n";
     }
+    for (var i in this.configValueKeys) {
+      var key = this.configValueKeys[i]; 
+      data += key + " " + document.getElementById(key).value + "\n";
+    }
+    for (var i in this.configCheckedKeys) {
+      var key = this.configCheckedKeys[i]; 
+      data += key + " " + document.getElementById(key).checked + "\n";
+    }
     return data;
   },
 
+  get hono() {
+    var val = document.getElementById("sendto.honorifics").value;
+    return val? val : "";
+  },
+
   configKeys: ["sendfrompath", "outputpath", "font", "zipfont"],
+  configValueKeys: [
+    "sendto.zipfontsize",
+    "sendfrom.zipfontsize",
+    "sendto.name.fontsize",
+    "sendto.addr.fontsize",
+    "sendfrom.addr.fontsize",
+    "sendfrom.name.fontsize",
+    "sendfrom_zipframe_offset",
+    "sendto.name.rect",
+    "sendto.addr.rect",
+    "sendfrom.addr.rect",
+    "sendfrom.name.rect"
+  ],
+  configCheckedKeys: [
+    "drawnenga",
+    "sendto.drawzipframe",
+    "sendfrom.drawzipframe",
+    "sendto.name.stretch",
+    "sendto.addr.stretch",
+    "sendfrom.name.stretch",
+    "sendfrom.addr.stretch",
+    "sendto.name.bottom",
+    "sendto.addr.bottom",
+    "sendfrom.name.bottom",
+    "sendfrom.addr.bottom"
+  ],
   "sendfrompath" : "",
   "outputpath" : "",
   config : "",
@@ -270,9 +311,12 @@ function print3(aStatus) {
     if (gPrinthaSettings.isPreview) {
       args.push("--preview");
       args.push("--svg");
+      args.push(gPrinthaSettings.formatLine(gPrinthaSettings._addressData[0],
+                                            gPrinthaSettings.hono));
     }
-    args.push(gPrinthaSettings.addressData);
-
+    else{
+      args.push(gPrinthaSettings.addressData);
+    }
     process.runwAsync(args, args.length, previewObserver, false);
   }
   catch(e) {

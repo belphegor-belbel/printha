@@ -1,3 +1,12 @@
 #!/bin/sh
+XULRUNNER_PATH=`find /bin | grep xulrunner*`
 
-xulrunner-17.0 ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha
+if [ -z "$XULRUNNER_PATH" ]; then
+  XULRUNNER_PATH=`find /usr/bin | grep xulrunner*`
+fi
+
+if [ -z "$XULRUNNER_PATH" ]; then
+  XULRUNNER_PATH=`find /usr/local/bin | grep xulrunner*`
+fi
+
+exec $XULRUNNER_PATH ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha
