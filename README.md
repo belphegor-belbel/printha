@@ -159,6 +159,14 @@ PDFの代わりにPostScriptファイル、またはSVGファイルを出力し�
 [入力データ](https://github.com/Torisugari/printha/blob/master/demo/demo3.sh)
 [出力データ](https://github.com/Torisugari/printha/blob/master/demo/3/renmei.pdf)
 
+
+GUI版のprinthaを使う
+------------------
+ビルドしたディレクトリにはprintha.guiというファイルが作成されます。
+XULRunnerがインストールされている環境で、このファイルを実行すると、
+GUIでprinthaを操作することができます。
+
+
 アンインストール
 --------------
 
@@ -175,6 +183,15 @@ harfbuzzディレクトリで、
 
 を実行してください。
 
+###GUI版のprinthaを使った場合
+GUI版のprinthaはインストールしていなくても利用できます。
+ただし、起動時、以下の場所にプロファイルディレクトリを勝手に作成します。
+
+    ~/.printhagui/...
+
+このソフトウェアは、XULRunner側の事情以外でプロファイルディレクトリを使っていないので、
+住所などの個人情報が残る心配はありません。
+同じ理由で、このディレクトリをいつ消そうとも問題はありません。
 
 その他の注意事項
 --------------
