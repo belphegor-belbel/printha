@@ -168,6 +168,7 @@ function selectCSV() {
 
   NetUtil.asyncFetch(fp.file, callback);
 }
+
 function loadSender() {
   var fp = Components.classes["@mozilla.org/filepicker;1"]
                      .createInstance(Components.interfaces.nsIFilePicker);
