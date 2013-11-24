@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://printha/skin/" type="text/css"?>
 
 <window title="Printha"
         xmlns:html="http://www.w3.org/1999/xhtml"
@@ -19,8 +20,8 @@
   <separator/>
   <groupbox>
   <caption label="宛先"/>
-<tabbox>
-<tabs>
+<tabbox style="color:red;">
+<tabs class="printha_selectable">
   <tab id="direct-input" label="直接入力"/>
   <tab label="CSVファイルを読み込む"/>
 </tabs>
@@ -182,7 +183,6 @@
           label="sendfrom.addr.bottom"
           checked="true"/>
 
-
 <vbox>
   <description>sendfrom_zipframe_offset</description>
   <textbox id="sendfrom_zipframe_offset"
@@ -228,11 +228,9 @@
       </tabpanels>
     </tabbox>
 
-
   </tabpanel>
   <tabpanel orient="vertical">
     <browser id="content"
-           type="content-primary"
            name="content"
            src="about:blank"
            flex="1"

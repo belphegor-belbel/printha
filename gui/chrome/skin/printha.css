@@ -1,0 +1,5 @@
+tabs.printha_selectable > tab:not([selected=true]) {
+  color:gray;
+  font-style:italic;
+}
+
