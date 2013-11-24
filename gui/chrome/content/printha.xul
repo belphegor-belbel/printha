@@ -17,29 +17,57 @@
 <tabpanels>
 <tabpanel orient="vertical">
   <separator/>
-  <groupbox id="csv-box">
-    <caption label="宛先のデータ"/>
+  <groupbox>
+  <caption label="宛先"/>
+<tabbox>
+<tabs>
+  <tab id="direct-input" label="直接入力"/>
+  <tab label="CSVファイルを読み込む"/>
+</tabs>
+<tabpanels>
+  <tabpanel orient="vertical">
+    <description>宛先の情報を入力して下さい。姓名欄には敬称まで記載して下さい。</description>
+    <groupbox>
+      <caption/>
+      <vbox flex="1">
+      <label value="姓名" control="sendto.name"/>
+      <textbox id="sendto.name" flex="1" multiline="true"/>
+      </vbox>
+      <hbox>
+      <label value="郵便番号" control="sendto.zipcode" />
+      <textbox id="sendto.zipcode" size="8"/>
+      </hbox>
+      <label value="住所" control="sendfrom.address" />
+      <textbox id="sendto.address" multiline="true" flex="1"/>
+    </groupbox>
+  </tabpanel>
+  <tabpanel orient="vertical" id="csv-box">
     <description>宛先の姓・名・郵便番号・住所が記載されているCSVファイルを選択して下さい。
     </description>
     <hbox>
       <textbox id="csv-path" readonly="true" flex="1"/>
       <button label="ファイルの選択..." oncommand="selectCSV();"/>
     </hbox>
-    <groupbox>
+    <groupbox orient="vertical">
       <caption label="先頭の情報"/>
       <hbox flex="1">
-      <label value="姓" control="sendto.fname"/>
-      <textbox id="sendto.fname" flex="1" readonly="true"/>
+      <label value="姓" control="csv.sendto.fname"/>
+      <textbox id="csv.sendto.fname" flex="1" readonly="true"/>
       <label value="名" control="sendto.sname"/>
-      <textbox id="sendto.sname" flex="1" readonly="true"/>
+      <textbox id="csv.sendto.sname" flex="1" readonly="true"/>
+   <label value="敬称" control="csv.sendto.honorifics"/>
+  <textbox id="csv.sendto.honorifics" value="様"/>
       </hbox>
-      <hbox flex="1">
+      <hbox>
       <label value="郵便番号" control="sendto.zipcode" />
-      <textbox id="sendto.zipcode" size="8" readonly="true"/>
+      <textbox id="csv.sendto.zipcode" size="8" readonly="true"/>
       </hbox>
       <label value="住所" control="sendto.name" />
-      <textbox id="sendto.address" multiline="true" flex="1" readonly="true"/>
+      <textbox id="csv.sendto.address" multiline="true" flex="1" readonly="true"/>
     </groupbox>
+  </tabpanel>
+</tabpanels>
+</tabbox>
   </groupbox>
   <groupbox id="sender-box">
     <caption label="差出人"/>
@@ -195,8 +223,7 @@
 <checkbox id="sendfrom.drawzipframe"
           label="sendfrom.drawzipframe"
           checked="false"/>
-  <description>敬称</description>
-  <textbox id="sendto.honorifics" value="様"/>
+
         </tabpanel>
       </tabpanels>
     </tabbox>

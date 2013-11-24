@@ -14,21 +14,54 @@ var gPrinthaSettings = {
   set addressData(aData) {
     this._addressData = aData;
     if (this._addressData.length > 0 && this._addressData[0].length > 3) {
-      document.getElementById("sendto.fname").value = this._addressData[0][0];
-      document.getElementById("sendto.sname").value = this._addressData[0][1];
-      document.getElementById("sendto.zipcode").value = this._addressData[0][2];
-      document.getElementById("sendto.address").value = this._addressData[0][3];
+      document.getElementById("csv.sendto.fname").value = this._addressData[0][0];
+      document.getElementById("csv.sendto.sname").value = this._addressData[0][1];
+      document.getElementById("csv.sendto.zipcode").value = this._addressData[0][2];
+      document.getElementById("csv.sendto.address").value = this._addressData[0][3];
       if (this._addressData[0].length > 4 && this._addressData[0][4]) {
-        document.getElementById("sendto.address").value += 
+        document.getElementById("csv.sendto.address").value += 
           "\n" + this._addressData[0][4];
       }
     }
     else {
-      document.getElementById("sendto.fname").value = "";
-      document.getElementById("sendto.sname").value = "";
-      document.getElementById("sendto.zipcode").value = "";
-      document.getElementById("sendto.address").value = "";
+      document.getElementById("csv.sendto.fname").value = "";
+      document.getElementById("csv.sendto.sname").value = "";
+      document.getElementById("csv.sendto.zipcode").value = "";
+      document.getElementById("csv.sendto.address").value = "";
     }
+  },
+
+  get isDirectInput() {
+    return document.getElementById("direct-input").selected;
+  },
+
+  get addressData() {
+    if (this.isDirectInput) {
+      return document.getElementById("sendto.name").value + ";" +
+             document.getElementById("sendto.zipcode").value + ";" +
+             document.getElementById("sendto.address").value;
+    }
+
+    var length = this._addressData.length;
+    var hono = this.hono;
+    var data = this.formatLine(this._addressData[0], hono);
+    for (var i = 1; i < length; i++) {
+      var temp = this.formatLine(this._addressData[i], hono);
+      if (temp) {
+        data += "|" + temp;
+      }
+    }
+    return data;
+  },
+
+  get firstAddressData() {
+    if (this.isDirectInput) {
+      return document.getElementById("sendto.name").value + ";" +
+             document.getElementById("sendto.zipcode").value + ";" +
+             document.getElementById("sendto.address").value;
+    }
+
+    return this.formatLine(this._addressData[0], this.hono);
   },
 
   set sendfromData(aData) {
@@ -47,19 +80,6 @@ var gPrinthaSettings = {
     return document.getElementById("sendfrom.name").value + ";" +
            document.getElementById("sendfrom.zipcode").value + ";" +
            document.getElementById("sendfrom.address").value;
-  },
-
-  get addressData() {
-    var length = this._addressData.length;
-    var hono = this.hono;
-    var data = this.formatLine(this._addressData[0], hono);
-    for (var i = 1; i < length; i++) {
-      var temp = this.formatLine(this._addressData[i], hono);
-      if (temp) {
-        data += "|" + temp;
-      }
-    }
-    return data;
   },
 
   formatLine: function (aLine, aHonorifics) {
@@ -92,7 +112,7 @@ var gPrinthaSettings = {
   },
 
   get hono() {
-    var val = document.getElementById("sendto.honorifics").value;
+    var val = document.getElementById("csv.sendto.honorifics").value;
     return val? val : "";
   },
 
@@ -312,8 +332,7 @@ function print3(aStatus) {
     if (gPrinthaSettings.isPreview) {
       args.push("--preview");
       args.push("--svg");
-      args.push(gPrinthaSettings.formatLine(gPrinthaSettings._addressData[0],
-                                            gPrinthaSettings.hono));
+      args.push(gPrinthaSettings.firstAddressData);
     }
     else{
       args.push(gPrinthaSettings.addressData);

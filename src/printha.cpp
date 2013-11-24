@@ -265,6 +265,7 @@ double printString(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
   fprintf(stderr, "line:%s\n", aString);
 #endif
 
+
   const bool isVertical = HB_DIRECTION_IS_VERTICAL(aDirection);
   const bool isBackward = HB_DIRECTION_IS_BACKWARD(aDirection);
   bool useVerticalLayout = true;
@@ -403,7 +404,7 @@ double printString(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
   if (aMaxFontSize == fontsize) {
     int32_t left = ((absMaxAdvance * kAdvanceFactor / fontsize) -
                abs(hbTotalAdvance));
-    if (aStretch) {
+    if (aStretch && length > 1) {
       absPadding = left / (length - 1);
     }
     else if (aBottom ^ isBackward) {
@@ -467,10 +468,8 @@ double printString(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
   cairo_font_face_t* caSelectedFont =
     cairo_ft_font_face_create_for_ft_face
      (aFTSelectedFont, useVerticalLayout? FT_LOAD_VERTICAL_LAYOUT : 0);
-
   cairo_set_font_face(ca, caSelectedFont);
   cairo_set_font_size(ca, fontsize);
-
   uint32_t glyphIndex = 0;
   const uint32_t kGlyphLength = 40;
   cairo_glyph_t glyphbuffer[kGlyphLength];
@@ -594,7 +593,6 @@ double printString(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
                            glyphbuffer, glyphIndex,
                            clusterbuffer, glyphIndex, clusterFlag);
   }
-  cairo_surface_flush(aCS);
 
   cairo_destroy(ca);
   cairo_font_face_destroy(caSelectedFont);
