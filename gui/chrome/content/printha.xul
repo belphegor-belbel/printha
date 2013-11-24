@@ -11,8 +11,8 @@
           src="chrome://printha/content/printha.js"/>
 <tabbox>
 <tabs>
-<tab label="基本"/>
-<tab label="詳細"/>
+<tab label="入力データ"/>
+<tab label="スタイル"/>
 <tab label="プレビュー" oncommand="print(true);"/>
 </tabs>
 <tabpanels>
