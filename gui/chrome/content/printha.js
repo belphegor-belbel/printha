@@ -414,3 +414,114 @@ function enddown(aEvent) {
 
 window.addEventListener("unload", enddown, false);
 window.addEventListener("load", startup, false);
+
+function hNarrower(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sx = parseFloat(numbers[0].value) + 0.5;
+  var ex = parseFloat(numbers[2].value) - 0.5;
+
+  if (sx <= ex) {
+    numbers[0].value = sx;
+    numbers[2].value = ex;
+  }
+}
+
+function vNarrower(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sy = parseFloat(numbers[1].value) + 0.5;
+  var ey = parseFloat(numbers[3].value) - 0.5;
+
+  if (sy <= ey) {
+    numbers[1].value = sy;
+    numbers[3].value = ey;
+  }
+}
+
+function hWider(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sx = parseFloat(numbers[0].value) - 0.5;
+  var ex = parseFloat(numbers[2].value) + 0.5;
+
+  if ((parseFloat(numbers[0].min) <= sx) &&
+      ex <= (parseFloat(numbers[2].max))) {
+    numbers[0].value = sx;
+    numbers[2].value = ex;
+  }
+}
+
+function vWider(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sy = parseFloat(numbers[1].value) - 0.5;
+  var ey = parseFloat(numbers[3].value) + 0.5;
+
+  if ((parseFloat(numbers[1].min) <= sy) &&
+      ey <= (parseFloat(numbers[3].max))) {
+    numbers[1].value = sy;
+    numbers[3].value = ey;
+  }
+}
+
+function goLeft(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sx = parseFloat(numbers[0].value) - 1.0;
+  var ex = parseFloat(numbers[2].value) - 1.0;
+
+  if ((parseFloat(numbers[0].min) <= sx) &&
+      (parseFloat(numbers[2].min) <= ex)) {
+    numbers[0].value = sx;
+    numbers[2].value = ex;
+  }
+}
+
+function goRight(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sx = parseFloat(numbers[0].value) + 1.0;
+  var ex = parseFloat(numbers[2].value) + 1.0;
+
+  if ((parseFloat(numbers[0].max) >= sx) &&
+      (parseFloat(numbers[2].max) >= ex)) {
+    numbers[0].value = sx;
+    numbers[2].value = ex;
+  }
+}
+
+function goUp(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sy = parseFloat(numbers[1].value) - 1.0;
+  var ey = parseFloat(numbers[3].value) - 1.0;
+
+  if ((parseFloat(numbers[1].min) <= sy) &&
+      (parseFloat(numbers[3].min) <= ey)) {
+    numbers[1].value = sy;
+    numbers[3].value = ey;
+  }
+}
+
+function goDown(aElement) {
+  var numbers = aElement.parentNode
+                        .parentNode
+                        .previousSibling.getElementsByTagName("textbox");
+  var sy = parseFloat(numbers[1].value) + 1.0;
+  var ey = parseFloat(numbers[3].value) + 1.0;
+
+  if ((parseFloat(numbers[1].max) >= sy) &&
+      (parseFloat(numbers[3].max) >= ey)) {
+    numbers[1].value = sy;
+    numbers[3].value = ey;
+  }
+}
+

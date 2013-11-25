@@ -237,6 +237,33 @@
                            min="0" max="419.527559" size="10"
                            value="360.000000"/>
                 </hbox>
+<hbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇦" oncommand="goLeft(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="⇧" oncommand="goUp(this)"/>
+    <button label="⇩" oncommand="goDown(this)"/>
+  </vbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇨" oncommand="goRight(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="↔+" oncommand="hWider(this)"/>
+    <spacer flex="1" />
+    <button label="↔-" oncommand="hNarrower(this)"/>
+  </vbox>
+  <vbox>
+    <button label="↕+" oncommand="vWider(this)"/>
+    <spacer flex="1" />
+    <button label="↕-" oncommand="vNarrower(this)"/>
+  </vbox>
+</hbox>
+
               <checkbox id="sendto.name.stretch" label="余白を文字間で均等に割り付ける。" checked="true" />
               <checkbox id="sendto.name.bottom" label="2行目以降を1行目の下限で揃える。" checked="false" />
     </tabpanel>
@@ -257,6 +284,32 @@
                            min="0" max="419.527559" size="10"
                            value="330.000000"/>
                 </hbox>
+<hbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇦" oncommand="goLeft(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="⇧" oncommand="goUp(this)"/>
+    <button label="⇩" oncommand="goDown(this)"/>
+  </vbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇨" oncommand="goRight(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="↔+" oncommand="hWider(this)"/>
+    <spacer flex="1" />
+    <button label="↔-" oncommand="hNarrower(this)"/>
+  </vbox>
+  <vbox>
+    <button label="↕+" oncommand="vWider(this)"/>
+    <spacer flex="1" />
+    <button label="↕-" oncommand="vNarrower(this)"/>
+  </vbox>
+</hbox>
               <checkbox id="sendto.addr.stretch" label="余白を文字間で均等に割り付ける。" checked="false" />
               <checkbox id="sendto.addr.bottom" label="2行目以降を1行目の下限で揃える。" checked="true" />
     </tabpanel>
@@ -277,6 +330,33 @@
                            min="0" max="419.527559" size="10"
                            value="340.000000"/>
                 </hbox>
+<hbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇦" oncommand="goLeft(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="⇧" oncommand="goUp(this)"/>
+    <button label="⇩" oncommand="goDown(this)"/>
+  </vbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇨" oncommand="goRight(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="↔+" oncommand="hWider(this)"/>
+    <spacer flex="1" />
+    <button label="↔-" oncommand="hNarrower(this)"/>
+  </vbox>
+  <vbox>
+    <button label="↕+" oncommand="vWider(this)"/>
+    <spacer flex="1" />
+    <button label="↕-" oncommand="vNarrower(this)"/>
+  </vbox>
+</hbox>
+
               <checkbox id="sendfrom.name.stretch" label="余白を文字間で均等に割り付ける。" checked="true" />
               <checkbox id="sendfrom.name.bottom" label="2行目以降を1行目の下限で揃える。" checked="false" />
     </tabpanel>
@@ -297,6 +377,33 @@
                            min="0" max="419.527559" size="10"
                            value="340.000000"/>
                 </hbox>
+<hbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇦" oncommand="goLeft(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="⇧" oncommand="goUp(this)"/>
+    <button label="⇩" oncommand="goDown(this)"/>
+  </vbox>
+  <vbox>
+    <spacer flex="1" />
+    <button label="⇨" oncommand="goRight(this)"/>
+    <spacer flex="1" />
+  </vbox>
+  <vbox>
+    <button label="↔+" oncommand="hWider(this)"/>
+    <spacer flex="1" />
+    <button label="↔-" oncommand="hNarrower(this)"/>
+  </vbox>
+  <vbox>
+    <button label="↕+" oncommand="vWider(this)"/>
+    <spacer flex="1" />
+    <button label="↕-" oncommand="vNarrower(this)"/>
+  </vbox>
+</hbox>
+
               <checkbox id="sendfrom.addr.stretch" label="余白を文字間で均等に割り付ける。" checked="false" />
               <checkbox id="sendfrom.addr.bottom" label="2行目以降を1行目の下限で揃える。" checked="true" />
     </tabpanel>
