@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://printha/skin/" type="text/css"?>
 
@@ -6,239 +6,318 @@
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         orient="vertical"
+        width="640"
         windowtype="window:printha">
   <script type="application/javascript"
-          src="chrome://printha/content/printha.js"/>
+          src="chrome://printha/content/printha.js" />
+  <hbox>
+    <description flex="1">宛先と差出人の情報を入力し、「プレビュー」タブで仕上がりを確認してから、右の「PDFファイルに保存する」ボタンを押して下さい。</description>
+    <button label="PDFファイルに保存する..." oncommand="print(false);" />
+  </hbox>
+  <tabbox>
+    <tabs>
+      <tab label="入力データ" />
+      <tab label="スタイル" />
+      <tab label="プレビュー" oncommand="print(true);" />
+    </tabs>
+    <tabpanels>
+      <tabpanel orient="vertical">
+        <separator />
+        <groupbox>
+          <caption label="宛先" />
+          <tabbox style="color:red;">
+            <tabs class="printha_selectable">
+              <tab id="direct-input" label="直接入力" />
+              <tab label="CSVファイルを読み込む" />
+            </tabs>
+            <tabpanels>
+              <tabpanel orient="vertical">
+                <description>宛先の情報を入力して下さい。姓名欄には敬称まで記入して下さい。</description>
+                <groupbox>
+                  <caption />
+                  <vbox flex="1">
+                    <hbox>
+                      <label value="姓名" control="sendto.name" />
+                      <textbox id="sendto.name" flex="1" multiline="true" />
+                    </hbox>
+                  </vbox>
+                  <hbox>
+                    <label value="郵便番号" control="sendto.zipcode" />
+                    <textbox id="sendto.zipcode" size="8" />
+                  </hbox>
+                  <hbox>
+                    <label value="住所" control="sendfrom.address" />
+                    <textbox id="sendto.address" multiline="true" flex="1" />
+                  </hbox>
+                </groupbox>
+              </tabpanel>
+              <tabpanel orient="vertical" id="csv-box">
+                <description>宛先の姓・名・郵便番号・住所が記載されているCSVファイルを選択して下さい。</description>
+                <hbox>
+                  <textbox id="csv-path" readonly="true" flex="1" />
+                  <button label="ファイルの選択..." oncommand="selectCSV();" />
+                </hbox>
+                <groupbox orient="vertical">
+                  <caption label="先頭の情報" />
+                  <hbox flex="1">
+                    <label value="姓" control="csv.sendto.fname" />
+                    <textbox id="csv.sendto.fname" flex="1" readonly="true" />
+                    <label value="名" control="sendto.sname" />
+                    <textbox id="csv.sendto.sname" flex="1" readonly="true" />
+                    <label value="敬称" control="csv.sendto.honorifics" />
+                    <textbox id="csv.sendto.honorifics" value="様" />
+                  </hbox>
+                  <hbox>
+                    <label value="郵便番号" control="sendto.zipcode" />
+                    <textbox id="csv.sendto.zipcode" size="8" readonly="true" />
+                  </hbox>
+                  <hbox>
+                    <label value="住所" control="sendto.name" />
+                    <textbox id="csv.sendto.address"
+                             multiline="true" flex="1" readonly="true" />
+                  </hbox>
+                </groupbox>
+              </tabpanel>
+            </tabpanels>
+          </tabbox>
+        </groupbox>
+        <groupbox id="sender-box">
+          <caption label="差出人" />
+          <description>差出人の情報を記入して下さい。</description>
+          <groupbox class="small">
+            <caption />
+            <vbox flex="1">
+              <hbox>
+                <label value="姓名" control="sendfrom.name" />
+                <textbox id="sendfrom.name" flex="1" multiline="true" />
+              </hbox>
+            </vbox>
+            <hbox>
+              <label value="郵便番号" control="sendto.zipcode" />
+              <textbox id="sendfrom.zipcode" size="8" />
+            </hbox>
+            <hbox>
+              <label value="住所" control="sendfrom.address" />
+              <textbox id="sendfrom.address" multiline="true" flex="1" />
+            </hbox>
+          </groupbox>
+          <hbox>
+            <spacer flex="1" />
+            <button label="ファイルから読み込む..." oncommand="loadSender();" />
+            <button label="ファイルに保存する..." oncommand="saveSender();" />
+          </hbox>
+        </groupbox>
+      </tabpanel>
+      <tabpanel orient="vertical">
+        <tabbox>
+          <tabs>
+            <tab label="フォント" />
+            <tab label="レイアウト" />
+            <tab label="その他" />
+          </tabs>
+          <tabpanels>
+            <tabpanel orient="vertical">
+              <description>フォントを変更したい場合は選択して下さい。ここで指定したフォントサイズは最大値であり、文字数が多すぎたり枠が狭すぎたりすると、自動的に最適なサイズまで縮小されます。</description>
+              <groupbox orient="vertical">
+                <caption label="郵便番号のフォント" />
+                <hbox>
+                  <menulist id="zipfont-list" flex="1">
+                    <menupopup>
+                      <menuitem label="OCRB" value="OCRB" />
+                      <menuseparator />
+                    </menupopup>
+                  </menulist>
+                  <spacer flex="1" />
+                </hbox>
+                <hbox>
+                  <label value="宛先郵便番号のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendto.zipfontsize" type="number"
+                           min="1" max="64" size="5" value="16" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+                <hbox>
+                  <label value="差出人郵便番号のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendfrom.zipfontsize" type="number"
+                           min="1" max="64" size="5" value="12" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+              </groupbox>
+              <groupbox>
+                <caption label="名前・住所のフォント" />
+                <hbox>
+                  <menulist id="font-list" flex="1">
+                    <menupopup>
+                      <menuitem label="IPAexMincho" value="IPAexMincho" />
+                      <menuseparator />
+                    </menupopup>
+                  </menulist>
+                  <spacer flex="1" />
+                </hbox>
+                <hbox>
+                  <label value="宛名のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendto.name.fontsize" type="number"
+                           min="1" max="64" size="5" value="32" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+                <hbox>
+                  <label value="宛先の住所のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendto.addr.fontsize" type="number"
+                           min="1" max="64" size="5" value="20" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+                <hbox>
+                  <label value="差出人の名前のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendfrom.name.fontsize" type="number"
+                           min="1" max="64" size="5" value="20" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+                <hbox>
+                  <label value="差出人の住所のフォントサイズ" />
+                  <spacer flex="1" />
+                  <textbox id="sendfrom.addr.fontsize" type="number"
+                           min="1" max="64" size="5" value="20" 
+                           decimalplaces="1"
+                           />
+                </hbox>
+              </groupbox>
+            </tabpanel>
+            <tabpanel orient="vertical">
+              <vbox>
+                <description>「お年玉付き年賀状」以外で差出人の郵便番号を印刷するための位置補正の値(単位はミリメートル)で、一般的な官製はがきの適正値は(0.0, 15.5)です。</description>
+                <hbox id="sendfrom_zipframe_offset">
+                  <button label="「お年玉付き」に合わせる"
+  oncommand="this.parentNode.childNodes[3].value=0;this.parentNode.childNodes[4].value=0;"
+                          />
+                  <button label="普通のはがきに合わせる"
+  oncommand="this.parentNode.childNodes[3].value=0;this.parentNode.childNodes[4].value=15.5;"
+                          />
+                  <spacer flex="1" />
+                  <textbox type="number" decimalplaces="1"
+                           min="-6" max="94" size="5"
+                           id="sendfrom_zipframe_offset.x"
+                           value="0.0"/>
+                  <textbox type="number" decimalplaces="1"
+                           min="-122" max="26" size="5"
+                           id="sendfrom_zipframe_offset.y"
+                           value="0.0"/>
+                </hbox>
+              </vbox>
 <tabbox>
-<tabs>
-<tab label="入力データ"/>
-<tab label="スタイル"/>
-<tab label="プレビュー" oncommand="print(true);"/>
-</tabs>
-<tabpanels>
-<tabpanel orient="vertical">
-  <separator/>
-  <groupbox>
-  <caption label="宛先"/>
-<tabbox style="color:red;">
-<tabs class="printha_selectable">
-  <tab id="direct-input" label="直接入力"/>
-  <tab label="CSVファイルを読み込む"/>
-</tabs>
-<tabpanels>
-  <tabpanel orient="vertical">
-    <description>宛先の情報を入力して下さい。姓名欄には敬称まで記載して下さい。</description>
-    <groupbox>
-      <caption/>
-      <vbox flex="1">
-      <label value="姓名" control="sendto.name"/>
-      <textbox id="sendto.name" flex="1" multiline="true"/>
-      </vbox>
-      <hbox>
-      <label value="郵便番号" control="sendto.zipcode" />
-      <textbox id="sendto.zipcode" size="8"/>
-      </hbox>
-      <label value="住所" control="sendfrom.address" />
-      <textbox id="sendto.address" multiline="true" flex="1"/>
-    </groupbox>
-  </tabpanel>
-  <tabpanel orient="vertical" id="csv-box">
-    <description>宛先の姓・名・郵便番号・住所が記載されているCSVファイルを選択して下さい。
-    </description>
-    <hbox>
-      <textbox id="csv-path" readonly="true" flex="1"/>
-      <button label="ファイルの選択..." oncommand="selectCSV();"/>
-    </hbox>
-    <groupbox orient="vertical">
-      <caption label="先頭の情報"/>
-      <hbox flex="1">
-      <label value="姓" control="csv.sendto.fname"/>
-      <textbox id="csv.sendto.fname" flex="1" readonly="true"/>
-      <label value="名" control="sendto.sname"/>
-      <textbox id="csv.sendto.sname" flex="1" readonly="true"/>
-   <label value="敬称" control="csv.sendto.honorifics"/>
-  <textbox id="csv.sendto.honorifics" value="様"/>
-      </hbox>
-      <hbox>
-      <label value="郵便番号" control="sendto.zipcode" />
-      <textbox id="csv.sendto.zipcode" size="8" readonly="true"/>
-      </hbox>
-      <label value="住所" control="sendto.name" />
-      <textbox id="csv.sendto.address" multiline="true" flex="1" readonly="true"/>
-    </groupbox>
-  </tabpanel>
-</tabpanels>
+  <tabs>
+    <tab label="宛先の名前"/>
+    <tab label="宛先の住所"/>
+    <tab label="差出人の名前"/>
+    <tab label="差出人の住所"/>
+  </tabs>
+  <tabpanels>
+    <tabpanel orient="vertical">
+                <description>各数字は、左上を原点とした場合、長方形の左辺、上辺、右辺、下辺の座標を指しています。あるいは、左上の点と右下の点を並べたものです。単位はポイント(Pt)で、1Ptは約0.353mmです。</description>
+                <hbox id="sendto.name.rect">
+                  <spacer flex="1" />
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="117.732283"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="80.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="165.732283"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="360.000000"/>
+                </hbox>
+              <checkbox id="sendto.name.stretch" label="余白を文字間で均等に割り付ける。" checked="true" />
+              <checkbox id="sendto.name.bottom" label="2行目以降を1行目の下限で揃える。" checked="false" />
+    </tabpanel>
+    <tabpanel orient="vertical">
+                <description>各数字は、左上を原点とした場合、長方形の左辺、上辺、右辺、下辺の座標を指しています。あるいは、左上の点と右下の点を並べたものです。単位はポイント(Pt)で、1Ptは約0.353mmです。</description>
+                <hbox id="sendto.addr.rect">
+                  <spacer flex="1" />
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="219.464567"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="80.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="283.464567"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="330.000000"/>
+                </hbox>
+              <checkbox id="sendto.addr.stretch" label="余白を文字間で均等に割り付ける。" checked="false" />
+              <checkbox id="sendto.addr.bottom" label="2行目以降を1行目の下限で揃える。" checked="true" />
+    </tabpanel>
+    <tabpanel orient="vertical">
+                <description>各数字は、左上を原点とした場合、長方形の左辺、上辺、右辺、下辺の座標を指しています。あるいは、左上の点と右下の点を並べたものです。単位はポイント(Pt)で、1Ptは約0.353mmです。</description>
+                <hbox id="sendfrom.name.rect">
+                  <spacer flex="1" />
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="0.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="200.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="32.000000 "/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="340.000000"/>
+                </hbox>
+              <checkbox id="sendfrom.name.stretch" label="余白を文字間で均等に割り付ける。" checked="true" />
+              <checkbox id="sendfrom.name.bottom" label="2行目以降を1行目の下限で揃える。" checked="false" />
+    </tabpanel>
+    <tabpanel orient="vertical">
+                <description>各数字は、左上を原点とした場合、長方形の左辺、上辺、右辺、下辺の座標を指しています。あるいは、左上の点と右下の点を並べたものです。単位はポイント(Pt)で、1Ptは約0.353mmです。</description>
+                <hbox id="sendfrom.addr.rect">
+                  <spacer flex="1" />
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="32.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="160.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="283.464567" size="10"
+                           value="80.000000"/>
+                  <textbox type="number" decimalplaces="6"
+                           min="0" max="419.527559" size="10"
+                           value="340.000000"/>
+                </hbox>
+              <checkbox id="sendfrom.addr.stretch" label="余白を文字間で均等に割り付ける。" checked="false" />
+              <checkbox id="sendfrom.addr.bottom" label="2行目以降を1行目の下限で揃える。" checked="true" />
+    </tabpanel>
+  </tabpanels>
 </tabbox>
-  </groupbox>
-  <groupbox id="sender-box">
-    <caption label="差出人"/>
-    <description>差出人の情報を記載して下さい。</description>
-    <groupbox class="small">
-      <caption/>
-      <vbox flex="1">
-      <label value="姓名" control="sendfrom.name"/>
-      <textbox id="sendfrom.name" flex="1" multiline="true"/>
-      </vbox>
-      <hbox>
-      <label value="郵便番号" control="sendto.zipcode" />
-      <textbox id="sendfrom.zipcode" size="8"/>
-      </hbox>
-      <label value="住所" control="sendfrom.address" />
-      <textbox id="sendfrom.address" multiline="true" flex="1"/>
-    </groupbox>
-    <hbox>
-      <spacer flex="1"/>
-      <button label="ファイルから読み込む..." oncommand="loadSender();"/>
-      <button label="ファイルに保存する..." oncommand="saveSender();"/>
-    </hbox>
-  </groupbox>
-  <separator/>
-  <button label="PDFファイルを保存する..." oncommand="print(false);"/>
-  <separator/>
-</tabpanel>
-  <tabpanel orient="vertical">
-    <tabbox>
-      <tabs>
-        <tab label="フォント"/>
-        <tab label="レイアウト"/>
-        <tab label="その他"/>
-      </tabs>
-      <tabpanels>
-        <tabpanel orient="vertical">
-
-    <description>フォントを変更したい場合は選択して下さい。</description>
-    <hbox>
-      <label value="名前・住所のフォント:"/>
-      <menulist id="font-list" flex="1">
-        <menupopup>
-          <menuitem label="IPAexMincho" value="IPAexMincho" />
-          <menuseparator/>
-        </menupopup>
-      </menulist>
-      <label value="郵便番号のフォント"/>
-      <menulist id="zipfont-list" flex="1">
-        <menupopup>
-          <menuitem label="OCRB" value="OCRB" />
-          <menuseparator/>
-        </menupopup>
-      </menulist>
-    </hbox>
-    <vbox>
-      <description>sendto.zipfontsize</description>
-      <textbox id="sendto.zipfontsize" type="number" min="1" max="64"
-               value="16"/>
-    </vbox>
-    <vbox>
-      <description>sendfrom.zipfontsize</description>
-      <textbox id="sendfrom.zipfontsize" type="number" min="1" max="64"
-               value="12"/>
-    </vbox>
-    <vbox>
-      <description>sendto.name.fontsize</description>
-      <textbox id="sendto.name.fontsize" type="number" min="1" max="64"
-               value="32"/>
-    </vbox>
-    <vbox>
-      <description>sendto.addr.fontsize</description>
-      <textbox id="sendto.addr.fontsize" type="number" min="1" max="64"
-               value="20"/>
-    </vbox>
-    <vbox>
-      <description>sendfrom.addr.fontsize</description>
-      <textbox id="sendfrom.addr.fontsize" type="number" min="1" max="64"
-               value="20"/>
-    </vbox>
-    <vbox>
-      <description>sendfrom.name.fontsize</description>
-      <textbox id="sendfrom.name.fontsize" type="number" min="1" max="64"
-               value="20"/>
-    </vbox>
-
-        </tabpanel>
-        <tabpanel orient="vertical">
-
-<checkbox id="sendto.name.stretch"
-          label="sendto.name.stretch"
-          checked="true"/>
-<checkbox id="sendfrom.name.stretch"
-          label="sendfrom.name.stretch"
-          checked="true"/>
-<checkbox id="sendto.addr.stretch"
-          label="sendto.addr.stretch"
-          checked="false"/>
-<checkbox id="sendfrom.addr.stretch"
-          label="sendfrom.addr.stretch"
-          checked="false"/>
-
-<checkbox id="sendto.name.bottom"
-          label="sendto.name.bottom"
-          checked="false"/>
-<checkbox id="sendfrom.name.bottom"
-          label="sendfrom.name.bottom"
-          checked="false"/>
-<checkbox id="sendto.addr.bottom"
-          label="sendto.addr.bottom"
-          checked="true"/>
-<checkbox id="sendfrom.addr.bottom"
-          label="sendfrom.addr.bottom"
-          checked="true"/>
-
-<vbox>
-  <description>sendfrom_zipframe_offset</description>
-  <textbox id="sendfrom_zipframe_offset"
-           value="0.0 0.0"/>
-</vbox>
-
-<vbox>
-  <description>sendto.name.rect</description>
-  <textbox id="sendto.name.rect"
-           value="117.732283 80.000000 165.732283 360.000000"/>
-</vbox>
-<vbox>
-  <description>sendto.addr.rect </description>
-  <textbox id="sendto.addr.rect"
-           value="219.464567 80.000000 283.464567 330.000000"/>
-</vbox>
-
-
-<vbox>
-  <description>sendfrom.name.rect</description>
-  <textbox id="sendfrom.name.rect"
-           value="0.000000 200.000000 32.000000 340.000000"/>
-</vbox>
-<vbox>
-  <description>sendfrom.addr.rect</description>
-  <textbox id="sendfrom.addr.rect"
-           value="32.000000 160.000000 80.000000 340.000000"/>
-</vbox>
-
-        </tabpanel>
-        <tabpanel orient="vertical">
-<checkbox id="drawnenga"
-          label="drawnenga"
-          checked="false"/>
-<checkbox id="sendto.drawzipframe"
-          label="sendto.drawzipframe"
-          checked="false"/>
-<checkbox id="sendfrom.drawzipframe"
-          label="sendfrom.drawzipframe"
-          checked="false"/>
-
-        </tabpanel>
-      </tabpanels>
-    </tabbox>
-
-  </tabpanel>
-  <tabpanel orient="vertical">
-    <browser id="content"
-           name="content"
-           src="about:blank"
-           flex="1"
-           disablehistory="true"
-           style="min-height : 149px; min-width : 101px;"
-           onclick="event.preventDefault();"
-           />
-  </tabpanel>
-</tabpanels>
-</tabbox>
+            </tabpanel>
+            <tabpanel orient="vertical">
+              <description>普通の官製はがきを年賀状として使う場合、「年賀」と書いておくと、前もって投函しても元旦以降に届けられます。</description>
+              <checkbox id="drawnenga" label="切手の下側に「年賀」と朱筆する。" checked="false" />
+<description>郵便番号の枠が付いていない白紙をはがきとして使う場合、宛先の郵便番号には赤枠またはハイフンを付ける必要があります。Printhaはハイフンの挿入には対応していないので、赤枠をつけて下さい。</description>
+              <checkbox id="sendto.drawzipframe" label="宛先の郵便番号に赤枠を描画する。" checked="false" />
+              <checkbox id="sendfrom.drawzipframe" label="差出人の郵便番号の点線で赤枠を描画する。" checked="false" />
+            </tabpanel>
+          </tabpanels>
+        </tabbox>
+      </tabpanel>
+      <tabpanel orient="vertical">
+        <browser id="content" name="content" src="about:blank" flex="1" disablehistory="true" style="min-height : 149px; min-width : 101px;" onclick="event.preventDefault();" />
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
 </window>
+
+

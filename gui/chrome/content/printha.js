@@ -108,6 +108,10 @@ var gPrinthaSettings = {
       var key = this.configCheckedKeys[i]; 
       data += key + " " + document.getElementById(key).checked + "\n";
     }
+    for (var i in this.configValuesKeys) {
+      var key = this.configValuesKeys[i]; 
+      data += key + this.valuesById(key) + "\n";
+    }
     return data;
   },
 
@@ -123,12 +127,7 @@ var gPrinthaSettings = {
     "sendto.name.fontsize",
     "sendto.addr.fontsize",
     "sendfrom.addr.fontsize",
-    "sendfrom.name.fontsize",
-    "sendfrom_zipframe_offset",
-    "sendto.name.rect",
-    "sendto.addr.rect",
-    "sendfrom.addr.rect",
-    "sendfrom.name.rect"
+    "sendfrom.name.fontsize"
   ],
   configCheckedKeys: [
     "drawnenga",
@@ -143,6 +142,22 @@ var gPrinthaSettings = {
     "sendfrom.name.bottom",
     "sendfrom.addr.bottom"
   ],
+  configValuesKeys: [
+    "sendfrom_zipframe_offset",
+    "sendto.addr.rect",
+    "sendto.name.rect",
+    "sendfrom.addr.rect",
+    "sendfrom.name.rect"
+  ],
+  valuesById: function(aId) {
+    var values = "";
+    var children = document.getElementById(aId).getElementsByTagName("textbox");
+    var i;
+    for (i = 0; i < children.length; i++) {
+      values += " " + children[i].value;
+    }
+    return values;
+  },
   "sendfrompath" : "",
   "outputpath" : "",
   config : "",
@@ -387,6 +402,8 @@ function startup(aEvent) {
 
   gPrinthaSettings.binpath = cl.handleFlagWithParam("printha-bin", false);
   FileUtils.getDir("TmpD", ["printha"]);
+
+  window.sizeToContent();
 }
 
 function enddown(aEvent) {
