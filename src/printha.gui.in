@@ -1,12 +1,28 @@
-#!/bin/sh
-XULRUNNER_PATH=`find /bin | grep xulrunner*`
+#!/bin/bash
 
-if [ -z "$XULRUNNER_PATH" ]; then
-  XULRUNNER_PATH=`find /usr/bin | grep xulrunner*`
+if type "firefox" >/dev/null 2>&1; then
+  # Launch printha-gui via Firefox if possible.
+  FIREFOX_PATH=`type -p firefox`
+  echo $FIREFOX_PATH
+  firefox -app ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha
+else
+  # Otherwise, find XULRunner
+  if type "xulrunner" >/dev/null 2>&1; then
+    XULRUNNER_PATH=`type -p xulrunner`
+  else
+    # It's so rude that the name may not be "xulrunner".
+    # Instead, find "xulrunner-17.0" etc.
+    XULRUNNER_PATH=`find /bin | grep -m 1 xulrunner*`
+    if [ -z "$XULRUNNER_PATH" ]; then
+      XULRUNNER_PATH=`find /usr/bin | grep -m 1 xulrunner*`
+      if [ -z "$XULRUNNER_PATH" ]; then
+        XULRUNNER_PATH=`find /usr/local/bin | grep -m 1 xulrunner*`
+      fi
+    fi
+  fi
+  echo $XULRUNNER_PATH
+  exec $XULRUNNER_PATH ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha
 fi
 
-if [ -z "$XULRUNNER_PATH" ]; then
-  XULRUNNER_PATH=`find /usr/local/bin | grep xulrunner*`
-fi
+    
 
-exec $XULRUNNER_PATH ${PROJECT_SOURCE_DIR}/gui/application.ini -printha-bin ${PROJECT_BINARY_DIR}/printha

@@ -74,12 +74,23 @@ var gPrinthaSettings = {
     document.getElementById("sendfrom.name").value = data[0];
     document.getElementById("sendfrom.zipcode").value = data[1];
     document.getElementById("sendfrom.address").value = data[2];
+
+    var length = (data.length > (3 + 6))? (3 + 6) : data.length;
+
+    for (var i = 3; i < length; i++) {
+      document.getElementById("sendfrom.extra[" + (i - 3).toString() + "]")
+              .value = data[i];
+    }
   },
 
   get sendfromData() {
-    return document.getElementById("sendfrom.name").value + ";" +
-           document.getElementById("sendfrom.zipcode").value + ";" +
-           document.getElementById("sendfrom.address").value;
+    var val = document.getElementById("sendfrom.name").value + ";" +
+              document.getElementById("sendfrom.zipcode").value + ";" +
+              document.getElementById("sendfrom.address").value;
+    for (var i = 0; i < 6; i++) {
+      val += ";" + document.getElementById("sendfrom.extra[" + i + "]").value;
+    }
+    return val;
   },
 
   formatLine: function (aLine, aHonorifics) {
@@ -160,6 +171,9 @@ var gPrinthaSettings = {
   },
   "sendfrompath" : "",
   "outputpath" : "",
+  get isExtraEnabled() {
+    return document.getElementById("extra.enabled").checked;
+  },
   config : "",
   svgpath: "",
   isPreview: false,
@@ -403,6 +417,10 @@ function startup(aEvent) {
   gPrinthaSettings.binpath = cl.handleFlagWithParam("printha-bin", false);
   FileUtils.getDir("TmpD", ["printha"]);
 
+  setTimeout(delayedStartup, 100);
+}
+
+function delayedStartup() {
   window.sizeToContent();
 }
 

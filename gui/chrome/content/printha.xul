@@ -14,6 +14,7 @@
     <description flex="1">宛先と差出人の情報を入力し、「プレビュー」タブで仕上がりを確認してから、右の「PDFファイルに保存する」ボタンを押して下さい。</description>
     <button label="PDFファイルに保存する..." oncommand="print(false);" />
   </hbox>
+
   <tabbox>
     <tabs>
       <tab label="入力データ" />
@@ -22,8 +23,9 @@
     </tabs>
     <tabpanels>
       <tabpanel orient="vertical">
-        <separator />
-        <groupbox>
+          <checkbox id="extra.enabled" label="追加欄を有効にする" checked="false" 
+            oncommand="document.getElementById('sendfrom.extra').hidden = !this.checked;window.sizeToContent();"
+  /><groupbox>
           <caption label="宛先" />
           <tabbox style="color:red;">
             <tabs class="printha_selectable">
@@ -81,26 +83,55 @@
             </tabpanels>
           </tabbox>
         </groupbox>
-        <groupbox id="sender-box">
+        <groupbox id="sender-box" orient="vertical">
           <caption label="差出人" />
           <description>差出人の情報を記入して下さい。</description>
-          <groupbox class="small">
-            <caption />
+          <hbox>
             <vbox flex="1">
               <hbox>
                 <label value="姓名" control="sendfrom.name" />
                 <textbox id="sendfrom.name" flex="1" multiline="true" />
               </hbox>
+              <hbox>
+                <label value="郵便番号" control="sendto.zipcode" />
+                <textbox id="sendfrom.zipcode" size="8" />
+              </hbox>
+              <hbox>
+                <label value="住所" control="sendfrom.address" />
+                <textbox id="sendfrom.address" multiline="true" flex="1" />
+              </hbox>
             </vbox>
-            <hbox>
-              <label value="郵便番号" control="sendto.zipcode" />
-              <textbox id="sendfrom.zipcode" size="8" />
-            </hbox>
-            <hbox>
-              <label value="住所" control="sendfrom.address" />
-              <textbox id="sendfrom.address" multiline="true" flex="1" />
-            </hbox>
-          </groupbox>
+            <tabbox id="sendfrom.extra" hidden="true">
+            <tabs>
+             <tab label="1"/>
+             <tab label="2"/>
+             <tab label="3"/>
+             <tab label="4"/>
+             <tab label="5"/>
+             <tab label="6"/>
+            </tabs>
+            <tabpanels>
+            <tabpanel>
+              <textbox id="sendfrom.extra[0]" multiline="true" flex="1" />
+            </tabpanel>
+            <tabpanel>
+              <textbox id="sendfrom.extra[1]" multiline="true" flex="1" />
+            </tabpanel>
+            <tabpanel>
+              <textbox id="sendfrom.extra[2]" multiline="true" flex="1" />
+            </tabpanel>
+            <tabpanel>
+              <textbox id="sendfrom.extra[3]" multiline="true" flex="1" />
+            </tabpanel>
+            <tabpanel>
+              <textbox id="sendfrom.extra[4]" multiline="true" flex="1" />
+            </tabpanel>
+            <tabpanel>
+              <textbox id="sendfrom.extra[5]" multiline="true" flex="1" />
+            </tabpanel>
+            </tabpanels>
+            </tabbox>
+          </hbox>
           <hbox>
             <spacer flex="1" />
             <button label="ファイルから読み込む..." oncommand="loadSender();" />
@@ -238,6 +269,7 @@
                            value="360.000000"/>
                 </hbox>
 <hbox>
+  <spacer flex="1" />
   <vbox>
     <spacer flex="1" />
     <button label="⇦" oncommand="goLeft(this)"/>
@@ -285,6 +317,7 @@
                            value="330.000000"/>
                 </hbox>
 <hbox>
+  <spacer flex="1" />
   <vbox>
     <spacer flex="1" />
     <button label="⇦" oncommand="goLeft(this)"/>
@@ -331,6 +364,7 @@
                            value="340.000000"/>
                 </hbox>
 <hbox>
+  <spacer flex="1" />
   <vbox>
     <spacer flex="1" />
     <button label="⇦" oncommand="goLeft(this)"/>
@@ -378,6 +412,7 @@
                            value="340.000000"/>
                 </hbox>
 <hbox>
+    <spacer flex="1" />
   <vbox>
     <spacer flex="1" />
     <button label="⇦" oncommand="goLeft(this)"/>
