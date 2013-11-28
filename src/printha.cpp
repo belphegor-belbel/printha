@@ -657,7 +657,7 @@ void printPage(FT_Face aFTSelectedFont, cairo_surface_t* aCS,
 
   if (aSettings.preview) {
     static const char kBuildDirImageFile[] =
-      CMAKE_SOURCE_DIR "/resources/bg.png";
+      PRINTHA_DATADIR "/resources/bg.png";
     setBackground(aCS, kBuildDirImageFile);
   }
   // See: <http://www.post.japanpost.jp/zipcode/zipmanual/p05.html>
@@ -811,18 +811,18 @@ inline bool fileCopy(const char* aSource, const char* aDest) {
 //#include <sys/stat.h>
 int main (int argc, char* argv[]) {
 
-  // The candidate is either ${CMAKE_SOURCE_DIR}/config.txt or
+  // The candidate is either ${PRINTHA_DATADIR}/config.txt or
   // /user/local/share/printha/config.txt
   static const char kBuildDirConfigFile[] =
-    CMAKE_SOURCE_DIR "/settings/config.txt"; 
+    PRINTHA_DATADIR "/settings/config.txt"; 
   static const char kBuildDirSendFromFile[] =
-    CMAKE_SOURCE_DIR "/settings/sendfrom.txt";
+    PRINTHA_DATADIR "/settings/sendfrom.txt";
   static const char kBuildDirSendToFile[] =
-    CMAKE_SOURCE_DIR "/settings/sendto.txt";
+    PRINTHA_DATADIR "/settings/sendto.txt";
   static const FcChar8 kBuildDirFontFile[] =
-    CMAKE_SOURCE_DIR "/resources/ipaexm00201/ipaexm.ttf";
+    PRINTHA_DATADIR "/resources/ipaexm00201/ipaexm.ttf";
   static const FcChar8 kBuildDirOCRBFontFile[] =
-    CMAKE_SOURCE_DIR "/resources/OCRB_aizu_1_1/OCRB_aizu_1_1.ttf";
+    PRINTHA_DATADIR "/resources/OCRB_aizu_1_1/OCRB_aizu_1_1.ttf";
 
   textformat_t settings;
 
@@ -832,7 +832,7 @@ int main (int argc, char* argv[]) {
 #ifdef DEBUG
     fprintf(stderr, "Successfully loaded config file:%s\n",
                     kBuildDirConfigFile);
-    settings::write(CMAKE_SOURCE_DIR "/src/printha_init.cpp", settings,
+    settings::write(PRINTHA_DATADIR "/src/printha_init.cpp", settings,
                     settings::kWriteFormatCSRC);
 #endif
   }
